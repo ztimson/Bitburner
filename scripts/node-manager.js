@@ -2,7 +2,7 @@ const SAVINGS = 10E6 // Minimum bank account balance
 
 export async function main(ns) {
 	function help(message) {
-		ns.tprint(`\n\n${!message ? '' : `${message}\n\n`}Usage:\nrun node-manager.js NUM_NODES\n\n\tNUM_NODES - Minimum number of nodes to maintain\n\n`);
+		ns.tprint(`\n\n${!message ? '' : `${message}\n\n`}Usage:\nrun node-manager.js <num>\n\n\tnum - Target number of nodes\n\n`);
 		ns.exit();
 	}
 
