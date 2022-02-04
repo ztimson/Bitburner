@@ -23,8 +23,7 @@ export async function main(ns) {
 		ns.print('===================================================');
 		if(message != null) MESSAGE_HISTORY.push(message);
 		MESSAGE_HISTORY.splice(0, MESSAGE_HISTORY.length - HISTORY_LENGTH);
-		MESSAGE_HISTORY.map(m => m).reverse().forEach(m => ns.print(m));
-		for(let i = MESSAGE_HISTORY.length; i < HISTORY_LENGTH; i++) ns.print('');
+		MESSAGE_HISTORY.forEach(m => ns.print(m));
 	}
 
 	// Setup
@@ -33,9 +32,9 @@ export async function main(ns) {
 	if(ns.args[0] == null) help('Missing number of nodes');
 	if(isNaN(ns.args[0])) help('First argument must be a number');
 	const HISTORY_LENGTH = 17;
-	const MESSAGE_HISTORY = [];
+	const MESSAGE_HISTORY = Array(HISTORY_LENGTH).fill('');
 	const LIMIT = ns.args[0] < ns.hacknet.maxNumNodes() ? ns.args[0] : ns.hacknet.maxNumNodes();
-	const SAVINGS = ng.args[1] ?? 0;
+	const SAVINGS = ns.args[1] ?? 0;
 	let nodeCount = ns.hacknet.numNodes();
 
 	log();

@@ -1,4 +1,4 @@
-# BitBurner
+# BitBurner - Scripts
 These scripts are for playing the [open source](https://github.com/danielyxie/bitburner) game [BitBurner](https://danielyxie.github.io/bitburner/)
 
 ## Table of Contents
@@ -46,10 +46,15 @@ Manages the specified number of nodes buying any if they don't exist.
 It's recommended you run this from your home computer, it useses 5.6 GB of RAM.
 ```
 Usage:
-run node-manager.js NUM_NODES
+run node-manager.js <num> [savings]
 
-	NUM_NODES - Minimum number of nodes to maintain
+	num - Target number of nodes
+	savings - Prevent spending bellow this point
 ```
 
 ### update.js
 Automaticlly downloads all the scripts in this repo using the in-game `wget`.
+```
+Usage:
+run update.js
+```
