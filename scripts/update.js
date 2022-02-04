@@ -1,18 +1,23 @@
+/**
+ * Automatically download all the scripts in the repository.
+ */
 export async function main(ns) {
+    const SRC = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
+    const DIST = '/scripts/';
     const FILE_LIST = [
-        'scripts/auto-pwn.js',
-        'scripts/bruteforce.js',
-        'scripts/crawler.js',
-        'scripts/miner.js',
-        'scripts/node-manager.js',
-        'scripts/update.js'
+        'auto-pwn.js',
+        'bruteforce.js',
+        'crawler.js',
+        'miner.js',
+        'node-manager.js',
+        'update.js'
     ];
 
-    function getUrl(file) {
-        return `https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/${file}`;
-    }
-
+    // Download each file
     for(const FILE of FILE_LIST) {
-        await ns.wget(getUrl(FILE), FILE);
+        ns.tprint(`Downloading: ${FILE}...`);
+        await ns.wget(`${SRC}${FILE}`, `${DIST}${FILE}`);
+        ns.tprint('Complete!');
     }
+    ns.tprint('Done!');
 }
