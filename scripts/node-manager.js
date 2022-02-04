@@ -1,22 +1,40 @@
 const SAVINGS = 10E6 // Minimum bank account balance
 
 export async function main(ns) {
+	function help(message) {
+		ns.tprint(`\n\n${!message ? '' : `${message}\n\n`}Usage:\nrun node-manager.js NUM_NODES\n\n\tNUM_NODES - Minimum number of nodes to maintain\n\n`);
+		ns.exit();
+	}
+
+	function log(message) {
+		ns.clearLog();
+		ns.print('===================================================');
+		ns.print(`🖥️ Node Manager: ${nodeCount}/${LIMIT} Nodes`);
+		ns.print('===================================================');
+		if(message != null) MESSAGE_HISTORY.push(message);
+		MESSAGE_HISTORY.splice(0, MESSAGE_HISTORY.length - HISTORY_LENGTH);
+		MESSAGE_HISTORY.map(m => m).reverse().forEach(m => ns.print(m));
+		for(let i = MESSAGE_HISTORY.length; i < HISTORY_LENGTH; i++) ns.print('');
+	}
+
 	ns.disableLog('ALL');
-	let limit = ns.args[0] || 8;
-	limit = limit < ns.hacknet.maxNumNodes() ? limit : ns.hacknet.maxNumNodes();
+	if(ns.args[0] == 'help') help();
+	if(ns.args[0] == null) help('Missing number of nodes');
+	if(isNaN(ns.args[0])) help('First argument must be a number');
+	
+	const HISTORY_LENGTH = 17;
+	const MESSAGE_HISTORY = [];
+	const LIMIT = ns.args[0] < ns.hacknet.maxNumNodes() ? ns.args[0] : ns.hacknet.maxNumNodes();
 	let nodeCount = ns.hacknet.numNodes();
 
-	ns.print('===================================================');
-	ns.print(`🖥️ Node Manager: ${limit > nodeCount ? limit : nodeCount} Nodes`);
-	ns.print('===================================================');
-
+	log();
     while(true) {
 		const BALANCE = ns.getServerMoneyAvailable('home');
 
-		if(nodeCount < limit && BALANCE - ns.hacknet.getPurchaseNodeCost() > SAVINGS) {
+		if(nodeCount < LIMIT && BALANCE - ns.hacknet.getPurchaseNodeCost() > SAVINGS) {
  			nodeCount++;
 			ns.hacknet.purchaseNode();
-			ns.print(`Buying Node ${nodeCount}`);
+			log(`Buying Node ${nodeCount}`);
 		} else {
 			const NODES = Array(nodeCount).fill(null)
 				.map((ignore, i) => ({
@@ -61,7 +79,7 @@ export async function main(ns) {
 			
 			if(BALANCE - NODES[0].bestUpgrade.cost > SAVINGS) {
 				const COST = Math.round(NODES[0].bestUpgrade.cost * 100) / 100;
-				ns.print(`Upgrading Node ${NODES[0].index} ${NODES[0].bestUpgrade.name}: $${COST}`);
+				log(`Upgrading Node ${NODES[0].index} ${NODES[0].bestUpgrade.name}: $${COST}`);
 				NODES[0].bestUpgrade.purchase();
 			}
 		}

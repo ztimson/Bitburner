@@ -43,7 +43,13 @@ It's recommended you run this in combination with `auto-pwn.js` to gain root & r
 ### node-manager.js
 Manages the specified number of nodes buying any if they don't exist.
 
-It's recommended you run this from your home computer, it useses very little RAM.
+It's recommended you run this from your home computer, it useses 5.6 GB of RAM.
+```
+Usage:
+run node-manager.js NUM_NODES
+
+	NUM_NODES - Minimum number of nodes to maintain
+```
 
 ### update.js
 Automaticlly downloads all the scripts in this repo using the in-game `wget`.
