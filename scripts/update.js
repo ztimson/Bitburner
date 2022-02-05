@@ -14,11 +14,12 @@ export async function main(ns) {
     ];
 
     // Download each file
+    ns.tprint("Downloading scripts:");
     for(const FILE of FILE_LIST) {
-        const SPEED = ~~(Math.random() * 100) / 10;
-        await ns.wget(`${SRC}${FILE}`, `${DIST}${FILE}`);
-        ns.tprint(`${FILE} \t [==================>] 100% \t (${SPEED} MB/s)`);
         await ns.sleep(500);
+        await ns.wget(`${SRC}${FILE}`, `${DIST}${FILE}`);
+        const SPEED = ~~((Math.random() * 200) + 100) / 10;
+        ns.tprint(`${FILE} ${FILE.length <= 10 ? '\t' : ''}\t [==================>] 100% \t (${SPEED} MB/s)`);
     }
     ns.tprint('Done!');
 }
