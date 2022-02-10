@@ -84,16 +84,20 @@ Options:
 Automatically download the latest versions of all scripts using wget.
 ```
 [home ~/]> run scripts/update.js
-Running script with 1 thread(s), pid 142 and args: [].
+Running script with 1 thread(s), pid 18 and args: [].
+/scripts/update.js: Updating self:
+/scripts/update.js: update.js 		 [==================>] 100% 	 (14.9 MB/s)
+/scripts/update.js: 
+/scripts/update.js: Restarting...
 /scripts/update.js: Downloading scripts:
-/scripts/update.js:
-/scripts/update.js: lib/arg-parser.js	[==================>] 100% 	 (15 MB/s)
-/scripts/update.js: auto-pwn.js		[==================>] 100% 	 (22.3 MB/s)
-/scripts/update.js: bruteforce.js	[==================>] 100% 	 (22 MB/s)
-/scripts/update.js: crawler.js		[==================>] 100% 	 (26.2 MB/s)
-/scripts/update.js: miner.js		[==================>] 100% 	 (10.8 MB/s)
-/scripts/update.js: node-manager.js	[==================>] 100% 	 (14.6 MB/s)
-/scripts/update.js: update.js		[==================>] 100% 	 (11.1 MB/s)
-/scripts/update.js:
+/scripts/update.js: 
+/scripts/update.js: lib/arg-parser.js 	 [==================>] 100% 	 (13.4 MB/s)
+/scripts/update.js: auto-pwn.js 	 [==================>] 100% 	 (15.8 MB/s)
+/scripts/update.js: bruteforce.js 	 [==================>] 100% 	 (18 MB/s)
+/scripts/update.js: crawler.js 		 [==================>] 100% 	 (23.5 MB/s)
+/scripts/update.js: miner.js 		 [==================>] 100% 	 (18.4 MB/s)
+/scripts/update.js: node-manager.js 	 [==================>] 100% 	 (22 MB/s)
+/scripts/update.js: update.js 		 [==================>] 100% 	 (22.7 MB/s)
+/scripts/update.js: 
 /scripts/update.js: ✅ Done!
 ```
