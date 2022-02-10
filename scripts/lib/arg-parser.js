@@ -34,7 +34,7 @@ export class ArgParser {
 		}
 		req.forEach((a, i) => parsed[a.key] = queue[i]);
 		queue.splice(0, req.length);
-		if(queue.length) parsed.extra = queue;
+		parsed.extra = queue;
 		return parsed;
 	}
 
