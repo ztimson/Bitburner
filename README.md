@@ -41,6 +41,8 @@ It's recommended you run this in combination with `auto-pwn.js` to gain root & r
 
 ### [node-manager.js](./scripts/node-manager.js)
 **RAM:** 5.70 GB
+
+Buy, upgrade & manage Hacknet nodes automatically.
 ```
 [home ~/]> run scripts/node-manager.js --help
 Running script with 1 thread(s), pid 128 and args: ["--help"].

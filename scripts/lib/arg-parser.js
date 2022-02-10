@@ -1,10 +1,19 @@
 export class ArgParser {
+	/**
+	 * Create a unix-like argument parser to extract flags from the argument list. Can also create help messages.
+	 * @param opts - {examples: string[], arguments: {key: string, alias: string, type: string, optional: boolean, desc: string}[], desc: string}
+	 */
 	constructor(opts) {
 		this.examples = opts.examples ?? [];
 		this.arguments = opts.args ?? [];
 		this.description = opts.desc;
 	}
 
+	/**
+	 * Parse the list for arguments & create a dictionary.
+	 * @param args {any[]} - Array of arguments
+	 * @returns Dictionary of matched flags + unmatched args under 'extra'
+	 */
 	parse(args) {
 		const req = this.arguments.filter(a => !a.optional);
 		const queue = [...args];
@@ -29,6 +38,10 @@ export class ArgParser {
 		return parsed;
 	}
 
+	/**
+	 * Create a help message of the expected paramters & usage.
+	 * @param msg {String} - Optional message to display with help
+	 */
 	help(msg) {
 		let message = '\n\n';
 		message += msg ? msg : this.description;

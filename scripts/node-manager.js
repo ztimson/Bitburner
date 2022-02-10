@@ -9,7 +9,7 @@ export async function main(ns) {
 
 	/**
 	 * Print header with logs
-	 * message - message to append to logs
+	 * @param message - message to append to logs
 	 */
 	function log(message) {
 		ns.clearLog();
