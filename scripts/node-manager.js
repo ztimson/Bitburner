@@ -23,7 +23,7 @@ export async function main(ns) {
 
 	// Initilize script arguments
 	const argParser = new ArgParser({
-		desc: 'Buy, upgrade & manage Hacknet nodes automatically.',
+		desc: 'Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.',
 		examples: [
 			'run node-manager.js [OPTIONS] LIMIT',
 			'run node-manager.js --balance 1E6 4',
