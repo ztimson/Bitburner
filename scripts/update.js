@@ -2,9 +2,9 @@
  * Automatically download all the scripts in the repository.
  */
 export async function main(ns) {
-    const SRC = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
-    const DIST = '/scripts/';
-    const FILE_LIST = [
+    const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
+    const dist = '/scripts/';
+    const fileList = [
         'auto-pwn.js',
         'bruteforce.js',
         'crawler.js',
@@ -15,11 +15,11 @@ export async function main(ns) {
 
     // Download each file
     ns.tprint("Downloading scripts:");
-    for(const FILE of FILE_LIST) {
+    for(const file of fileList) {
         await ns.sleep(500);
-        await ns.wget(`${SRC}${FILE}`, `${DIST}${FILE}`);
-        const SPEED = ~~((Math.random() * 200) + 100) / 10;
-        ns.tprint(`${FILE} ${FILE.length <= 10 ? '\t' : ''}\t [==================>] 100% \t (${SPEED} MB/s)`);
+        await ns.wget(`${src}${file}`, `${dist}${file}`);
+        const speed = ~~((Math.random() * 200) + 100) / 10;
+        ns.tprint(`${file} ${file.length <= 10 ? '\t' : ''}\t [==================>] 100% \t (${speed} MB/s)`);
     }
     ns.tprint('Done!');
 }
