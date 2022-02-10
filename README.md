@@ -61,16 +61,18 @@ Options:
 
 ### [update.js](./scripts/update.js)
 **RAM:** 1.60 GB
+
+Automatically download the latest versions of all scripts using wget.
 ```
-[home ~/]> run scripts/update.js --help
-Running script with 1 thread(s), pid 129 and args: ["--help"].
-/scripts/update.js: 
-
-Automatically update scripts from the repository using wget.
-
-Usage:	run update.js
-	run update.js --help
-
-Options:
-	-h --help		 Display help message
+[home ~/]> run scripts/update.js
+Running script with 1 thread(s), pid 142 and args: [].
+/scripts/update.js: Downloading scripts:
+/scripts/update.js: lib/arg-parser.js	[==================>] 100% 	 (15 MB/s)
+/scripts/update.js: auto-pwn.js		[==================>] 100% 	 (22.3 MB/s)
+/scripts/update.js: bruteforce.js	[==================>] 100% 	 (22 MB/s)
+/scripts/update.js: crawler.js		[==================>] 100% 	 (26.2 MB/s)
+/scripts/update.js: miner.js		[==================>] 100% 	 (10.8 MB/s)
+/scripts/update.js: node-manager.js	[==================>] 100% 	 (14.6 MB/s)
+/scripts/update.js: update.js		[==================>] 100% 	 (11.1 MB/s)
+/scripts/update.js: ✅ Done!
 ```
