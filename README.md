@@ -4,14 +4,13 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
 ## Table of Contents
 [[_TOC_]]
 
-## Setup
-The repository can be loaded into the game by doing the following:
-1. Download the update script ingame: `wget https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/update.js scripts/update.js`
-2. Run update script: `run scripts/update.js`
-
 ## Quick Start
 ```bash
-# Start the node manager
+# Download & run the update script ingame
+wget https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/update.js scripts/update.js
+run scripts/update.js
+
+# Start the node manager with 8 nodes
 run scripts/node-manager.js 8
 
 # Chain the crawler, auto-pwner & miner to hack everything within 3 hops
@@ -35,7 +34,7 @@ Usage:	run auto-pwn.js [TARGET] [SCRIPT] [ARGS]...
 
 	TARGET			 Target machine to root. Defaults to localhost
 	SCRIPT			 Script to copy & execute
-	ARGS			 Any aditional arguments to pass to SCRIPT. Passing '{{TARGET}}' will forward the current target
+	ARGS			 Aditional arguments for SCRIPT. Forward the target with "{{TARGET}}"
 
 Options:
 	-h --help		 Display help message
@@ -51,10 +50,28 @@ Scans the network to a desired depth & runs the specified script against targets
 
 It's recommended you use this in combination with `auto-pwn.js`.
 
-### [miner.js](./scripts/miner.js) (WIP)
-Will weaken, spoof & hack the target in a loop.
+### [miner.js](./scripts/miner.js)
+**RAM:** 2.35 GB
 
-It's recommended you run this in combination with `auto-pwn.js` to gain root & run the miner on the remote machine.
+Weaken, spoof & hack the target in a loop for money.
+```
+[home ~/]> run scripts/miner.js --help
+
+Running script with 1 thread(s), pid 41 and args: ["--help"].
+
+/scripts/miner.js: 
+
+Weaken, spoof & hack the target in a loop for money.
+
+Usage:	run miner.js [OPTIONS] [TARGET]
+	run miner.js --help
+
+	TARGET			 Target to mine. Defaults to localhost
+
+Options:
+	-t --threads		 Speed up script with more CPU power
+	-h --help		 Display help message
+```
 
 ### [node-manager.js](./scripts/node-manager.js)
 **RAM:** 5.70 GB

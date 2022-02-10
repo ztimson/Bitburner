@@ -1,5 +1,8 @@
 import {ArgParser} from './scripts/lib/arg-parser';
 
+/**
+ * Pwn a target server will availible tools. Can also copy & execute a script after pwning.
+ */
 export async function main(ns) {
 	ns.disableLog('ALL');
 	
@@ -24,7 +27,7 @@ export async function main(ns) {
 		args: [
 			{key: 'TARGET', desc: 'Target machine to root. Defaults to localhost'},
 			{key: 'SCRIPT', desc: 'Script to copy & execute'},
-			{key: 'ARGS', desc: 'Any aditional arguments to pass to SCRIPT. Passing \'{{TARGET}}\' will forward the current target'},
+			{key: 'ARGS', desc: 'Aditional arguments for SCRIPT. Forward the target with "{{TARGET}}"'},
 			{key: 'help', alias: 'h', optional: true, desc: 'Display help message'},
 		]
 	});

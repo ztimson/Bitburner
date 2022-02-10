@@ -4,6 +4,10 @@
 export async function main(ns) {
     ns.disableLog('ALL');
     
+    /**
+     * Download a file from the repo with some fancy styling & deplays.
+     * @param file {String} - file name
+     */
     async function download(file) {
         await ns.wget(`${src}${file}`, `${dest}${file}`);
         const speed = ~~((Math.random() * 200) + 100) / 10;
