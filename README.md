@@ -15,14 +15,31 @@ The repository can be loaded into the game by doing the following:
 run scripts/node-manager.js 8
 
 # Chain the crawler, auto-pwner & miner to hack everything within 3 hops
-run scripts/crawler.js 3 scripts/auto-pwn.js scripts/miner.js
+run scripts/crawler.js 3 /scripts/auto-pwn.js {{TARGET}} /scripts/miner.js
 ```
 
 ## Scripts
-### [auto-pwn.js](./scripts/auto-pwn.js) (WIP)
-Automatically gains root on a target machine. After being pwned, the specified files will be coppied & ran.
+### [auto-pwn.js](./scripts/auto-pwn.js)
+**RAM:** 4.75 GB
 
-It's recomended you use this in combination with `miner.js`
+Automatically gain root on a target machine. Optionaly after being rooted, a file can be coppied & executed.
+```
+[home ~/]> run scripts/auto-pwn.js --help
+Running script with 1 thread(s), pid 176 and args: ["--help"].
+/scripts/auto-pwn.js: 
+
+Automatically gain root on a target machine. Optionaly after being rooted, a file can be coppied & executed.
+
+Usage:	run auto-pwn.js [TARGET] [SCRIPT] [ARGS]...
+	run auto-pwn.js --help
+
+	TARGET			 Target machine to root. Defaults to localhost
+	SCRIPT			 Script to copy & execute
+	ARGS			 Any aditional arguments to pass to SCRIPT. Passing '{{TARGET}}' will forward the current target
+
+Options:
+	-h --help		 Display help message
+```
 
 ### [bruteforce.js](./scripts/bruteforce.js) (WIP)
 Attacks target until security falls bellow threshold. Useful for throwing extra compute power & cracking a specific computer.
@@ -69,6 +86,7 @@ Automatically download the latest versions of all scripts using wget.
 [home ~/]> run scripts/update.js
 Running script with 1 thread(s), pid 142 and args: [].
 /scripts/update.js: Downloading scripts:
+/scripts/update.js:
 /scripts/update.js: lib/arg-parser.js	[==================>] 100% 	 (15 MB/s)
 /scripts/update.js: auto-pwn.js		[==================>] 100% 	 (22.3 MB/s)
 /scripts/update.js: bruteforce.js	[==================>] 100% 	 (22 MB/s)
@@ -76,5 +94,6 @@ Running script with 1 thread(s), pid 142 and args: [].
 /scripts/update.js: miner.js		[==================>] 100% 	 (10.8 MB/s)
 /scripts/update.js: node-manager.js	[==================>] 100% 	 (14.6 MB/s)
 /scripts/update.js: update.js		[==================>] 100% 	 (11.1 MB/s)
+/scripts/update.js:
 /scripts/update.js: ✅ Done!
 ```

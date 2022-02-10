@@ -1,58 +1,86 @@
+import {ArgParser} from './scripts/lib/arg-parser';
+
 export async function main(ns) {
+	ns.disableLog('ALL');
+	
 	/**
-	 * Prints text and waits a random amount of time to emulate
-	 * work being complete.
+	 * Prints text and waits a random amount of time to emulate work being complete.
+	 * @param text {String} - message to Display
+	 * @param min {Number} - minimum amount of time to wait in seconds. Defaults to 1 second.
+	 * @param max {Number} - maximum amount of time to wait in seconds. Defaults to 1 second.
 	 */
 	async function printWithDelay(text, min=1, max=1) {
 		ns.tprint(text);
 		await ns.sleep(~~(Math.random() * (max * 1000 - min * 1000)) + min * 1000);
 	}
 
-	function usage(message) {
-		ns.tprint(`${!message ? '' : `${message}\n\n`}Usage:\nrun hack.js <target> <script1> [...scripts]\n\n\ttarget - Hostname or Address to attack\n\tscript1 - Path to script to run\n\tscripts - Additional scripts to run`);
-	}
+	// Initilize script arguments
+	const argParser = new ArgParser({
+		desc: 'Automatically gain root on a target machine. Optionaly after being rooted, a file can be coppied & executed.',
+		examples: [
+			'run auto-pwn.js [TARGET] [SCRIPT] [ARGS]...',
+			'run auto-pwn.js --help',
+		],
+		args: [
+			{key: 'TARGET', desc: 'Target machine to root. Defaults to localhost'},
+			{key: 'SCRIPT', desc: 'Script to copy & execute'},
+			{key: 'ARGS', desc: 'Any aditional arguments to pass to SCRIPT. Passing \'{{TARGET}}\' will forward the current target'},
+			{key: 'help', alias: 'h', optional: true, desc: 'Display help message'},
+		]
+	});
+	const args = argParser.parse(ns.args);
+	if(args['help']) return ns.tprint(argParser.help());
 
 	// Setup
-	ns.disableLog('ALL');
-	if (ns.args[0] == null) return usage('Missing target address');
-	if (ns.args.length < 2) return usage('Provide scritp(s) for remote execution');
-	const TARGET = ns.args[0];
-	const SCRIPTS = ns.args.slice(1);
+	const target = args['TARGET'] && args['TARGET'] != 'localhost' ? args['TARGET'] : ns.getHostname();
 
 	// Banner
 	ns.tprint('===================================================');
-	ns.tprint(`🧑‍💻 Hacking: ${TARGET}`);
+	ns.tprint(`🧑‍💻 Pwning: ${target}`);
 	await printWithDelay('===================================================');
 
 	// Gain root
-	// await printWithDelay(`Attacking (SSH) ⚔️ ${TARGET}:22`, 3, 5);
-	// ns.brutessh(TARGET);
-	// await printWithDelay(`Attacking (FTP) ⚔️ ${TARGET}:24`, 3, 5);
-	// ns.ftpcrack(TARGET);
-	ns.nuke(TARGET);
-	await printWithDelay(`💀 Root Granted 💀`);
-
-	// Copy scripts
-	ns.tprint('');
-	await printWithDelay('Copying scripts:');
-	await Promise.all(SCRIPTS.map(async s => {
-		const SPEED = ~~(Math.random() * 100) / 10
-		await printWithDelay(`${s} \t [==================>] 100% \t (${SPEED} MB/s)`);
-		await ns.scp(s, TARGET);
-	}));
-
-	// Run scripts
-	ns.tprint('');
-	const THREADS = Math.floor(ns.getServerMaxRam(TARGET) / 2.3);
-	await Promise.all(SCRIPTS.map(async s => {
-		ns.scriptKill(s, TARGET);
-		await printWithDelay(`ssh -c "run ${s} -t ${THREADS}" root@${TARGET}`);
-		const PID = ns.exec(s, TARGET, THREADS, TARGET);
-		if(!PID) ns.tprint('⚠️ Failed to start ⚠️');
-	}));
-	ns.tprint('✅ Complete!');
+	try {
+		ns.brutessh(target);
+		await printWithDelay(`Attacking (SSH) ⚔️ ${target}:22`, 3, 5);
+		ns.ftpcrack(target);
+		await printWithDelay(`Attacking (FTP) ⚔️ ${target}:24`, 3, 5);
+	} catch {
+	} finally {
+		try {
+			ns.nuke(target)
+			await printWithDelay(`💀 Root Granted 💀`);
+		} catch {	
+			await printWithDelay(`⚠️ Failed to Root ⚠️`);
+		}
+	}
+	
+	if(args['SCRIPT']) {
+		// Copy scripts
+		ns.tprint('');
+		await printWithDelay('Copying script:');
+		const speed = ~~(Math.random() * 100) / 10
+		await ns.scp(args['SCRIPT'], target);
+		await printWithDelay(`${args['SCRIPT']} \t [==================>] 100% \t (${speed} MB/s)`);
+		
+		// Run scripts
+		ns.tprint('');
+		ns.tprint('Executing:');
+		const threads = Math.floor(ns.getServerMaxRam(target) / 2.3);
+		ns.scriptKill(args['SCRIPT'], target);
+		await printWithDelay(`ssh -c "run ${args['SCRIPT']} ${args['extra'].join(' ')} -t ${threads}" root@${target}`);
+		const pid = ns.exec(args['SCRIPT'], target, threads, ...args['extra'].map(a => a == '{{TARGET}}' ? target : a));
+		if(!pid) return ns.tprint('⚠️ Failed to start ⚠️');
+		ns.tprint('');
+		ns.tprint('✅ Complete!');
+		ns.tprint('');
+	}
 }
 
+/**
+ * Autocomplete script arguments
+ * @param data - provided by API
+ */
 export function autocomplete(data) {
 	return [...data.servers, ...data.scripts];
 }
