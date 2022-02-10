@@ -79,7 +79,7 @@ Options:
 ```
 
 ### [update.js](./scripts/update.js)
-**RAM:** 1.60 GB
+**RAM:** 2.60 GB
 
 Automatically download the latest versions of all scripts using wget.
 ```

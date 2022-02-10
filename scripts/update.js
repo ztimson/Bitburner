@@ -2,6 +2,8 @@
  * Automatically download all the scripts in the repository.
  */
 export async function main(ns) {
+    ns.disableLog('ALL');
+    
     async function download(file) {
         await ns.wget(`${src}${file}`, `${dest}${file}`);
         const speed = ~~((Math.random() * 200) + 100) / 10;
@@ -29,7 +31,7 @@ export async function main(ns) {
         ns.tprint('');
         ns.tprint("Restarting...");
         await ns.sleep(2000);
-        return ns.exec(`${dest}update.js`, ns.getHostname(), 1, 1);
+        return ns.run(`${dest}update.js`, 1, 1);
     }
 
     // Download each file
