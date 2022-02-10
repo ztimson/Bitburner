@@ -40,21 +40,37 @@ Will weaken, spoof & hack the target in a loop.
 It's recommended you run this in combination with `auto-pwn.js` to gain root & run the miner on the remote machine.
 
 ### [node-manager.js](./scripts/node-manager.js)
-Manages the specified number of nodes buying any if they don't exist.
-
-It's recommended you run this from your home computer, it useses 5.6 GB of RAM.
+**RAM:** 5.70 GB
 ```
-Usage: run node-manager.js [OPTION] LIMIT
+[home ~/]> run scripts/node-manager.js --help
+Running script with 1 thread(s), pid 128 and args: ["--help"].
+/scripts/node-manager.js: 
 
-	Limit - Limit the number of nodes the script will buy
+Buy, upgrade & manage Hacknet nodes automatically.
+
+Usage:	run node-manager.js [OPTIONS] LIMIT
+	run node-manager.js --balance 1E6 4
+	run node-manager.js --help
+
+	LIMIT			 Limit the number of nodes the manager will buy
 
 Options:
-	Help - Displays this help message
-	Balance - Prevent spending bellow this point
+	-b --balance=num	 Prevent spending bellow this point
+	-h --help		 Display help message
 ```
 
 ### [update.js](./scripts/update.js)
-Automaticlly downloads all the scripts in this repo using the in-game `wget`.
+**RAM:** 1.60 GB
 ```
-Usage: run update.js
+[home ~/]> run scripts/update.js --help
+Running script with 1 thread(s), pid 129 and args: ["--help"].
+/scripts/update.js: 
+
+Automatically update scripts from the repository using wget.
+
+Usage:	run update.js
+	run update.js --help
+
+Options:
+	-h --help		 Display help message
 ```
