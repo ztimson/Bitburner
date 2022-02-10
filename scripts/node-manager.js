@@ -8,7 +8,7 @@ export async function main(ns) {
 	 * message - optional message to add
 	 */
 	function help(message) {
-		ns.tprint(`\n\n${!message ? '' : `${message}\n\n`}Usage:\nrun node-manager.js <num> [savings]\n\n\tnum - Target number of nodes\n\tsavings - Prevent spending bellow this point\n\n`);
+		ns.tprint(`\n\n${!message ? '' : `${message}\n\n`}Usage: run node-manager.js [OPTION] LIMIT\n\n\tLimit - Limit the number of nodes the script will buy\n\nOptions:\n\tHelp - Displays this help message\n\tBalance - Prevent spending bellow this point\n\n`);
 		ns.exit();
 	}
 
@@ -19,36 +19,44 @@ export async function main(ns) {
 	function log(message) {
 		ns.clearLog();
 		ns.print('===================================================');
-		ns.print(`🖥️ Node Manager: ${nodeCount}/${LIMIT} Nodes`);
+		ns.print(`🖥️ Node Manager: ${nodeCount}/${limit} Nodes`);
 		ns.print('===================================================');
-		if(message != null) MESSAGE_HISTORY.push(message);
-		MESSAGE_HISTORY.splice(0, MESSAGE_HISTORY.length - HISTORY_LENGTH);
-		MESSAGE_HISTORY.forEach(m => ns.print(m));
+		if(message != null) messageHistory.push(message);
+		messageHistory.splice(0, messageHistory.length - historyLength);
+		messageHistory.forEach(m => ns.print(m));
 	}
 
 	// Setup
 	ns.disableLog('ALL');
+	if(ns.args.length == 0) help('Missing number of nodes'); 
 	if(ns.args[0] == 'help') help();
-	if(ns.args[0] == null) help('Missing number of nodes');
-	if(isNaN(ns.args[0])) help('First argument must be a number');
-	const HISTORY_LENGTH = 17;
-	const MESSAGE_HISTORY = Array(HISTORY_LENGTH).fill('');
-	const LIMIT = ns.args[0] < ns.hacknet.maxNumNodes() ? ns.args[0] : ns.hacknet.maxNumNodes();
-	const SAVINGS = ns.args[1] ?? 0;
-	let nodeCount = ns.hacknet.numNodes();
+	const historyLength = 17;
+	const messageHistory = Array(historyLength).fill('');
+	let limit, savings, nodeCount = ns.hacknet.numNodes();
+
+	if(ns.args.length == 1) {
+		if(isNaN(ns.args[0])) help('Limit must be a number');
+		limit = ns.args[0];
+		savings = 0;
+	} else if(ns.args.length == 2) {
+		if(isNaN(ns.args[1])) help('Limit must be a number');
+		limit = ns.args[1];
+		if(isNaN(ns.args[0])) help('Balance must be a number');
+		savings = ns.args[0];
+	}
 
 	log();
     while(true) {
-		const BALANCE = ns.getServerMoneyAvailable('home');
+		const balance = ns.getServerMoneyAvailable('home');
 
 		// Check if we should buy a new node
-		if(nodeCount < LIMIT && BALANCE - ns.hacknet.getPurchaseNodeCost() > SAVINGS) {
+		if(nodeCount < limit && balance - ns.hacknet.getPurchaseNodeCost() >= savings) {
  			nodeCount++;
 			ns.hacknet.purchaseNode();
 			log(`Buying Node ${nodeCount}`);
 		} else {
 			// Create an ordered list of nodes by their cheapest upgrade
-			const NODES = Array(nodeCount).fill(null)
+			const nodes = Array(nodeCount).fill(null)
 				.map((ignore, i) => ({ // Gather information
 					index: i,
 					cacheCost: ns.hacknet.getCacheUpgradeCost(i),
@@ -90,10 +98,10 @@ export async function main(ns) {
 				});
 			
 			// Apply the cheapest upgrade
-			if(BALANCE - NODES[0].bestUpgrade.cost > SAVINGS) {
-				const COST = Math.round(NODES[0].bestUpgrade.cost * 100) / 100;
-				log(`Upgrading Node ${NODES[0].index} ${NODES[0].bestUpgrade.name}: $${COST}`);
-				NODES[0].bestUpgrade.purchase();
+			if(nodes.length && balance - nodes[0].bestUpgrade.cost >= savings) {
+				const cost = Math.round(nodes[0].bestUpgrade.cost * 100) / 100;
+				log(`Upgrading Node ${nodes[0].index} ${nodes[0].bestUpgrade.name}: $${cost}`);
+				nodes[0].bestUpgrade.purchase();
 			}
 		}
 
