@@ -13,8 +13,8 @@ run scripts/update.js
 # Start the node manager with 8 nodes
 run scripts/node-manager.js 8
 
-# Chain the crawler, auto-pwner & miner to hack everything within 3 hops
-run scripts/crawler.js 3 /scripts/auto-pwn.js {{TARGET}} /scripts/miner.js
+# Chain the crawler, auto-pwner & miner to hack everything on the network
+run scripts/crawler.js /scripts/auto-pwn.js {{TARGET}} /scripts/miner.js
 ```
 
 ## Scripts
@@ -24,7 +24,7 @@ run scripts/crawler.js 3 /scripts/auto-pwn.js {{TARGET}} /scripts/miner.js
 Automatically gain root on a target machine. Optionaly after being rooted, a file can be coppied & executed.
 ```
 [home ~/]> run scripts/auto-pwn.js --help
-Running script with 1 thread(s), pid 176 and args: ["--help"].
+Running script with 1 thread(s), pid 161 and args: ["--help"].
 /scripts/auto-pwn.js: 
 
 Automatically gain root on a target machine. Optionaly after being rooted, a file can be coppied & executed.
@@ -37,18 +37,37 @@ Usage:	run auto-pwn.js [TARGET] [SCRIPT] [ARGS]...
 	ARGS			 Aditional arguments for SCRIPT. Forward the target with "{{TARGET}}"
 
 Options:
+	-t --threads=num	 Set number of threads for script
 	-h --help		 Display help message
 ```
 
 ### [bruteforce.js](./scripts/bruteforce.js) (WIP)
 Attacks target until security falls bellow threshold. Useful for throwing extra compute power & cracking a specific computer.
 
-It's recommended you use any extra compute power on your home computer/servers to break strong servers & speed up the process.
-
 ### [crawler.js](./scripts/crawler.js) (WIP)
-Scans the network to a desired depth & runs the specified script against targets.
+**RAM:** 3.05 GB
 
-It's recommended you use this in combination with `auto-pwn.js`.
+Search the network for targets to execute a script against.
+```
+[home ~/]> run scripts/crawler.js --help
+Running script with 1 thread(s), pid 163 and args: ["--help"].
+/scripts/crawler.js: 
+
+Search the network for targets to execute a script against.
+
+Usage:	run crawler.js [OPTIONS] SCRIPT [ARGS]...
+	run crawler.js --help
+
+	SCRIPT			 Script to copy & execute
+	ARGS			 Aditional arguments for SCRIPT. Forward the target with "{{TARGET}}"
+
+Options:
+	-d --depth=num		 Number of network hops. Defaults to 3
+	-l --level=num		 Exclude targets with a high hacking level. Defaults to hack level, 0 to disable
+	-p --ports=num		 Exclute targets with too many closed ports
+	-t --threads=num	 Set number of threads for script
+	-h --help		 Display help message
+```
 
 ### [miner.js](./scripts/miner.js)
 **RAM:** 2.35 GB
@@ -56,20 +75,17 @@ It's recommended you use this in combination with `auto-pwn.js`.
 Weaken, spoof & hack the target in a loop for money.
 ```
 [home ~/]> run scripts/miner.js --help
-
-Running script with 1 thread(s), pid 41 and args: ["--help"].
-
+Running script with 1 thread(s), pid 165 and args: ["--help"].
 /scripts/miner.js: 
 
 Weaken, spoof & hack the target in a loop for money.
 
-Usage:	run miner.js [OPTIONS] [TARGET]
+Usage:	run miner.js [TARGET]
 	run miner.js --help
 
 	TARGET			 Target to mine. Defaults to localhost
 
 Options:
-	-t --threads		 Speed up script with more CPU power
 	-h --help		 Display help message
 ```
 
@@ -79,10 +95,10 @@ Options:
 Buy, upgrade & manage Hacknet nodes automatically.
 ```
 [home ~/]> run scripts/node-manager.js --help
-Running script with 1 thread(s), pid 128 and args: ["--help"].
+Running script with 1 thread(s), pid 166 and args: ["--help"].
 /scripts/node-manager.js: 
 
-Buy, upgrade & manage Hacknet nodes automatically.
+Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
 
 Usage:	run node-manager.js [OPTIONS] LIMIT
 	run node-manager.js --balance 1E6 4
@@ -100,21 +116,15 @@ Options:
 
 Automatically download the latest versions of all scripts using wget.
 ```
-[home ~/]> run scripts/update.js
-Running script with 1 thread(s), pid 18 and args: [].
-/scripts/update.js: Updating self:
-/scripts/update.js: update.js 		 [==================>] 100% 	 (14.9 MB/s)
+[home ~/]> run scripts/update.js --help
+Running script with 1 thread(s), pid 167 and args: ["--help"].
 /scripts/update.js: 
-/scripts/update.js: Restarting...
-/scripts/update.js: Downloading scripts:
-/scripts/update.js: 
-/scripts/update.js: lib/arg-parser.js 	 [==================>] 100% 	 (13.4 MB/s)
-/scripts/update.js: auto-pwn.js 	 [==================>] 100% 	 (15.8 MB/s)
-/scripts/update.js: bruteforce.js 	 [==================>] 100% 	 (18 MB/s)
-/scripts/update.js: crawler.js 		 [==================>] 100% 	 (23.5 MB/s)
-/scripts/update.js: miner.js 		 [==================>] 100% 	 (18.4 MB/s)
-/scripts/update.js: node-manager.js 	 [==================>] 100% 	 (22 MB/s)
-/scripts/update.js: update.js 		 [==================>] 100% 	 (22.7 MB/s)
-/scripts/update.js: 
-/scripts/update.js: ✅ Done!
+
+Automatically download the latest versions of all scripts using wget.
+
+Usage:	run update.js
+	run update.js --help
+
+Options:
+	-h --help		 Display help message
 ```
