@@ -67,68 +67,63 @@ class ArgParser {
 	}
 }
 
-/**
- * Automatically download all the scripts in the repository.
- */
 export async function main(ns) {
-    ns.disableLog('ALL');
-    
-    /**
-     * Download a file from the repo with some fancy styling & deplays.
-     * @param file {String} - file name
-     */
-    async function download(file) {
-        await ns.wget(`${src}${file}`, `${dest}${file}`);
-        const speed = ~~((Math.random() * 200) + 100) / 10;
-        ns.tprint(`${file} ${file.length <= 10 ? '\t' : ''}\t [==================>] 100% \t (${speed} MB/s)`);
-    }
+	ns.disableLog('ALL');
 
     // Initilize script arguments
 	const argParser = new ArgParser({
-		desc: 'Automatically download the latest versions of all scripts using wget.',
+		desc: 'Scan the network for devices and display as an ASCII tree:\n  ├─ n00dles (ROOTED)\n  |    └─ max-hardware (80|1)\n  |        └─ neo-net (50|1)\n  ├─ foodnstuff (ROOTED)\n  └─ sigma-cosmetics (ROOTED)',
 		examples: [
-			'run update.js',
-			'run update.js --help',
+			'run network-graph.js [OPTIONS] TARGET',
+			'run network-graph.js --help',
 		],
 		args: [
+			{key: 'TARGET', desc: 'Starting point to scan from, defaults to home'},
+			{key: 'depth', alias: 'd', type: 'num', optional: true, desc: 'Depth to scan for devices to, defaults to 3'},
+            {key: 'verbose', alias: 'v', type: 'bool', optional: true, desc: 'Displays "ROOTED" or the required hack level & ports: (level|port)'},
 			{key: 'help', alias: 'h', type: 'bool', optional: true, desc: 'Display help message'},
 		]
 	});
-    const args = argParser.parse(ns.args);
-	if(args['help']) return ns.tprint(argParser.help());
+	const args = argParser.parse(ns.args);
+    if(args['help']) return ns.tprint(argParser.help());
+    const start = args['TARGET'] || 'home';
+	const mDepth = args['depth'] || 3;
 
-    // Setup
-    const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
-    const dest = '/scripts/';
-    const fileList = [
-        'auto-pwn.js',
-        'bruteforce.js',
-        'crawler.js',
-        'miner.js',
-		'network-graph.js',
-        'node-manager.js'
-    ];
+	/**
+	 * Recursively search network & build a tree
+	 * @param host {string} - Point to scan from
+	 * @param depth {number} - Current scanning depth
+	 * @param maxDepth {number} - Depth to scan to
+	 * @param blacklist {String[]} - Devices already discovered
+	 * @returns Dicionary of discovered devices
+	 */
+	function scan(host, depth = 1, maxDepth = mDepth, blacklist = [host]) {
+		if(depth > maxDepth) return {};
+		const localTargets = ns.scan(host).filter(target => !blacklist.includes(target));
+		blacklist = blacklist.concat(localTargets);
+		return localTargets.reduce((acc, target) => {
+			const info = ns.getServer(target);
+			const verbose = args['verbose'] ? ` (${info.hasAdminRights ? 'ROOTED' : `${info.requiredHackingSkill}|${info.numOpenPortsRequired}`})` : '';
+			const name = `${target}${verbose}`;
+			acc[name] = scan(target, depth + 1, maxDepth, blacklist);
+			return acc;
+		}, {});
+	}
 
-    // Update self & restart
-    if(!ns.args.length) {
-        ns.tprint("Updating self:");
-        await ns.sleep(1000);
-        await download('update.js');
-        await ns.sleep(500);
-        ns.tprint('');
-        ns.tprint("Restarting...");
-        await ns.sleep(2000);
-        return ns.run(`${dest}update.js`, 1, 1);
-    }
+	/**
+	 * Iterate tree & print to screen
+	 * @param tree {Object} - Tree to parse
+	 * @param spacer {String} - Spacer text for tree formatting
+	 */
+	function render(tree, spacer = '') {
+		Object.keys(tree).forEach((key, i, arr) => {
+			const last = i == arr.length - 1;
+			const branch = last ? '└─ ' : '├─ ';
+			ns.tprint(`${spacer}${branch}${key}`);
+			render(tree[key], spacer + (last ? '    ' : '|    '));
+		});
+	}
 
-    // Download each file
-    ns.tprint("Downloading scripts:");
-    ns.tprint('');
-    for(const file of fileList) {
-        await ns.sleep(500);
-        await download(file);
-    }
-    ns.tprint('');
-    ns.tprint('✅ Done!');
-    ns.tprint('');
+	const network = scan(start);
+	render(network);
 }

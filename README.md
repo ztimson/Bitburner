@@ -89,6 +89,33 @@ Options:
 	-h --help		 Display help message
 ```
 
+### [network-graph.js](./scripts/network-graph.js)
+**RAM:** 3.80 GB
+
+Scan the network for devices and display as an ASCII tree
+```
+[home ~/]> run /scripts/network-graph.js -h
+Running script with 1 thread(s), pid 138 and args: ["-h"].
+/scripts/network-graph.js: 
+
+Scan the network for devices and display as an ASCII tree:
+  ├─ n00dles (ROOTED)
+  |    └─ max-hardware (80|1)
+  |        └─ neo-net (50|1)
+  ├─ foodnstuff (ROOTED)
+  └─ sigma-cosmetics (ROOTED)
+
+Usage:	run network-graph.js [OPTIONS] TARGET
+	run network-graph.js --help
+
+	TARGET			 Starting point to scan from, defaults to home
+
+Options:
+	-d --depth=num		 Depth to scan for devices to, defaults to 3
+	-v --verbose		 Displays "ROOTED" or the required hack level & ports: (level|port)
+	-h --help		 Display help message
+```
+
 ### [node-manager.js](./scripts/node-manager.js)
 **RAM:** 5.70 GB
 
