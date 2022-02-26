@@ -74,6 +74,7 @@ export async function main(ns) {
 	const argParser = new ArgParser({
 		desc: 'Scan the network for devices and display as an ASCII tree:\n  ├─ n00dles (ROOTED)\n  |    └─ max-hardware (80|1)\n  |        └─ neo-net (50|1)\n  ├─ foodnstuff (ROOTED)\n  └─ sigma-cosmetics (ROOTED)',
 		examples: [
+			'run network-graph.js',
 			'run network-graph.js [OPTIONS] TARGET',
 			'run network-graph.js --help',
 		],
@@ -120,10 +121,14 @@ export async function main(ns) {
 			const last = i == arr.length - 1;
 			const branch = last ? '└─ ' : '├─ ';
 			ns.tprint(`${spacer}${branch}${key}`);
-			render(tree[key], spacer + (last ? '    ' : '|    '));
+			render(tree[key], spacer + (last ? '    ' : '|   '));
 		});
 	}
 
 	const network = scan(start);
 	render(network);
+}
+
+export function autocomplete(data) {
+	return [...data.servers];
 }

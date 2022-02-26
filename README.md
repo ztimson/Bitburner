@@ -92,7 +92,7 @@ Options:
 ### [network-graph.js](./scripts/network-graph.js)
 **RAM:** 3.80 GB
 
-Scan the network for devices and display as an ASCII tree
+Scan the network for devices and display as an ASCII tree.
 ```
 [home ~/]> run /scripts/network-graph.js -h
 Running script with 1 thread(s), pid 138 and args: ["-h"].
@@ -105,7 +105,8 @@ Scan the network for devices and display as an ASCII tree:
   ├─ foodnstuff (ROOTED)
   └─ sigma-cosmetics (ROOTED)
 
-Usage:	run network-graph.js [OPTIONS] TARGET
+Usage:	run network-graph.js
+	run network-graph.js [OPTIONS] TARGET
 	run network-graph.js --help
 
 	TARGET			 Starting point to scan from, defaults to home
