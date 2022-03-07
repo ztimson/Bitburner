@@ -101,6 +101,7 @@ export async function main(ns) {
     const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
     const dest = '/scripts/';
     const fileList = [
+		'lib/arg-parser.js',
         'auto-pwn.js',
         'bruteforce.js',
         'crawler.js',
