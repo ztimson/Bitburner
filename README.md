@@ -90,31 +90,31 @@ Options:
 ```
 
 ### [network-graph.js](./scripts/network-graph.js)
-**RAM:** 3.80 GB
+**RAM:** 3.85 GB
 
 Scan the network for devices and display as an ASCII tree.
 ```
-[home ~/]> run /scripts/network-graph.js -h
-Running script with 1 thread(s), pid 138 and args: ["-h"].
+[home ~/]> run /scripts/network-graph.js --help
+Running script with 1 thread(s), pid 138 and args: ["--help"].
 /scripts/network-graph.js: 
 
 Scan the network for devices and display as an ASCII tree:
+ home
   ├─ n00dles (ROOTED)
-  |    └─ max-hardware (80|1)
-  |        └─ neo-net (50|1)
+  |   └─ max-hardware (80|1)
+  |       └─ neo-net (50|1)
   ├─ foodnstuff (ROOTED)
   └─ sigma-cosmetics (ROOTED)
 
-Usage:	run network-graph.js
-	run network-graph.js [OPTIONS] TARGET
+Usage:	run network-graph.js [OPTIONS] 
 	run network-graph.js --help
 
-	TARGET			 Starting point to scan from, defaults to home
-
 Options:
-	-d --depth=num		 Depth to scan for devices to, defaults to 3
-	-v --verbose		 Displays "ROOTED" or the required hack level & ports: (level|port)
-	-h --help		 Display help message
+	-d --depth		 Depth to scan to, defaults to 3
+	-f --filter		 Display path to single device
+	-s --start		 Point to start scan from, defaults to current machine
+	-v --verbose		 Displays the required hack level & ports needed to root: (level|port)
+	-h --help		 Display this help message
 ```
 
 ### [node-manager.js](./scripts/node-manager.js)
