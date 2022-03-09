@@ -144,7 +144,7 @@ export async function main(ns) {
 		throw err;
 	}
 
-	if(!args['skip'] || args['skip'] != 32479805) {
+	if(!args['skip'] || args['skip'] != 278024) {
 		// Banner
 		ns.tprint('===================================================');
 		ns.tprint(`Updating: ${args['device']}`);
@@ -158,8 +158,10 @@ export async function main(ns) {
         await downloadPrint(ns, `${dest}${updateFile}`);
         ns.tprint('');
         await slowPrint(ns, 'Restarting...');
-		ns.tprint('');
-        return ns.exec(`${dest}${updateFile}`, args['device'], 1, 32479805);
+        const pid = ns.exec(`${dest}${updateFile}`, args['device'], 1, 278024);
+		if(pid == 0) ns.tprint('Failed');
+		else ns.tprint('Done!');
+		return ns.tprint('');
     } else { // Update everything else
         await slowPrint(ns, 'Downloading scripts:');
         for(let file of fileList) {
