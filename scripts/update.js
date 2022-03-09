@@ -160,8 +160,8 @@ export async function main(ns) {
         await slowPrint(ns, 'Restarting...');
         const pid = ns.exec(`${dest}${updateFile}`, args['device'], 1, 278024);
 		if(pid == 0) ns.tprint('Failed');
-		else ns.tprint('Done!');
-		return ns.tprint('');
+		else ns.tprint('Complete');
+		return await slowPrint(ns, '');
     } else { // Update everything else
         await slowPrint(ns, 'Downloading scripts:');
         for(let file of fileList) {
