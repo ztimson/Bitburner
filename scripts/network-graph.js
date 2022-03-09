@@ -4,7 +4,7 @@ export async function main(ns) {
 	// Setup
 	ns.disableLog('ALL');
 	const argParser = new ArgParser('network-graph.js', 'Scan the network for devices and display as an ASCII tree:\n home\n  ├─ n00dles (ROOTED)\n  |   └─ max-hardware (80|1)\n  |       └─ neo-net (50|1)\n  ├─ foodnstuff (ROOTED)\n  └─ sigma-cosmetics (ROOTED)', null, [
-		{name: 'target', desc: 'Point to start scan from, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'},
+		{name: 'device', desc: 'Point to start scan from, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'},
 		{name: 'depth', desc: 'Depth to scan to, defaults to 3', flags: ['-d', '--depth'], default: Infinity, type: 'num'},
         {name: 'filter', desc: 'Display devices matching name', flags: ['-f', '--filter'], type: 'string'},
 		{name: 'regex', desc: 'Display devices matching pattern', flags: ['-r', '--regex'], type: 'string'},
@@ -85,8 +85,8 @@ export async function main(ns) {
 	}
 
 	// Run
-	ns.tprint(args['target']);
-	const found = scan(args['target']);
+	ns.tprint(args['device']);
+	const found = scan(args['device']);
 	if(args['regex']) filter(found, args['regex'], true);
 	else if(args['filter']) filter(found, args['filter']);
 	render(found);

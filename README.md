@@ -66,18 +66,18 @@ Options:
 ### [miner.js](./scripts/miner.js)
 **RAM:** 2.45 GB
 
-Weaken, Grow, Hack loop to "mine" target machine for money.
+Weaken, Grow, Hack loop to "mine" machine for money.
 ```
 [home ~/]> run scripts/miner.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/miner.js: 
 
-Weaken, Grow, Hack loop to "mine" target machine for money.
+Weaken, Grow, Hack loop to "mine" machine for money.
 
-Usage:	run miner.js [TARGET]
+Usage:	run miner.js [DEVICE]
 	run miner.js --help
 
-	TARGET			 Device to mine, defaults to current machine
+	DEVICE			 Device to mine, defaults to current machine
 
 Options:
 	-h --help		 Display this help message
@@ -100,10 +100,10 @@ Scan the network for devices and display as an ASCII tree:
   ├─ foodnstuff (ROOTED)
   └─ sigma-cosmetics (ROOTED)
 
-Usage:	run network-graph.js [OPTIONS] [TARGET]
+Usage:	run network-graph.js [OPTIONS] [DEVICE]
 	run network-graph.js --help
 
-	TARGET			 Point to start scan from, defaults to current machine
+	DEVICE			 Point to start scan from, defaults to current machine
 
 Options:
 	-d --depth		 Depth to scan to, defaults to 3
@@ -145,12 +145,12 @@ Programs can be commented out to lower the cost of running.
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/rootkit.js: 
 
-Automatically gain root on a target machine. A file can also be uploaded & executed.
+Automatically gain root access to a device. A file can also be uploaded & executed.
 
-Usage:	run rootkit.js [OPTIONS] [TARGET] [SCRIPT] [ARGS]...
+Usage:	run rootkit.js [OPTIONS] [DEVICE] [SCRIPT] [ARGS]...
 	run rootkit.js --help
 
-	TARGET			 Target machine to root, defaults to current machine
+	DEVICE			 Device to root, defaults to current machine
 	SCRIPT			 Script to copy & execute
 	ARGS			 Arguments for script. Forward the current target with: {{TARGET}}
 
