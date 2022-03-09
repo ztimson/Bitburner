@@ -164,11 +164,12 @@ Running script with 1 thread(s), pid 1 and args: ["--help"].
 
 Download the latest script updates from the repository using wget.
 
-Usage:	run update.js
+Usage:	run update.js [OPTIONS] [SKIP]
 	run update.js --help
 
-	TARGET			Target device to update, defaults to current machine
+	SKIP			 Skip updating self (for debugging)
 
 Options:
-	-h --help		 Display help message
+	-d --device		 Device to update, defaults to current machine
+	-h --help		 Display this help message
 ```
