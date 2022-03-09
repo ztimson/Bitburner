@@ -6,13 +6,13 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
   - [Scripts](#scripts)
-    - [bruteforce.js (WIP)](#bruteforcejs-wip)
 	- [crawler.js](#crawlerjs)
 	- [miner.js](#minerjs)
 	- [network-graph.js](#network-graphjs)
 	- [node-manager.js](#node-managerjs)
 	- [rootkit.js](#rootkitjs)
 	- [update.js](#updatejs)
+	- [vanguard.js](#vanguardjs)
 
 ## Quick Start
 
@@ -177,5 +177,26 @@ Usage:	run update.js [OPTIONS] [SKIP]
 
 Options:
 	-d --device		 Device to update, defaults to current machine
+	-h --help		 Display this help message
+```
+
+### [vanguard.js](./scripts/vanguard.js)
+**RAM:** 1.90 GB
+
+Weaken the device indefinitely.
+```
+[home ~/scripts]> run /scripts/vanguard.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/vanguard.js: 
+
+Weaken the device indefinitely.
+
+Usage:	run vanguard.js [OPTIONS] [DEVICE]
+	run vanguard.js --help
+
+	DEVICE			 Device to weaken, defaults to the current machine
+
+Options:
+	-l --limit		 Limit the number of times to run
 	-h --help		 Display this help message
 ```
