@@ -26,8 +26,9 @@ run scripts/update.js
 # Start the node manager with 8 nodes
 run scripts/node-manager.js 8
 
-# Chain the crawler, auto-pwner & miner to hack everything on the network
-run scripts/crawler.js /scripts/rootkit.js {{TARGET}} /scripts/miner.js
+# Chain the crawler, rootkit & miner to hack everything on the network
+alias hackAll="run scripts/crawler.js /scripts/rootkit.js {{TARGET}} /scripts/miner.js"
+hackAll
 ```
 
 Learn more about the [availible scripts](#scripts) bellow or pass the `--help` flag to any of the included scripts in-game.
