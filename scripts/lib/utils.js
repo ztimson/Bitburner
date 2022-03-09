@@ -5,7 +5,7 @@
  */
 export async function downloadPrint(ns, file) {
 	const speed = ~~(Math.random() * 100) / 10;
-	const spacing = Array(5 - Math.floor((file.length) / 8)).fill('\t').join('');
+	const spacing = Array(40 - file.length || 1).fill(' ').join('');
 	await slowPrint(ns, `${file}${spacing}[==================>] 100% \t (${speed} MB/s)`);
 }
 

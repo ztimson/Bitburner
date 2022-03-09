@@ -121,10 +121,11 @@ export async function main(ns) {
 	ns.disableLog('ALL');
     const updateFile = 'update.js';
 	const argParser = new ArgParser(updateFile, 'Download the latest script updates from the repository using wget.', null, [
-		{name: 'target', desc: 'Target device to update, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'}
+		{name: 'skip', desc: 'Skip updating self (for debugging)', optional: true, type: 'bool'},
+		{name: 'device', desc: 'Device to update, defaults to current machine', flags: ['-d', '--device'], default: ns.getHostname(), type: 'string'}
 	]);
 	const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
-    const dest = '/scripts2/';
+    const dest = '/scripts/';
     const fileList = [
 		'lib/arg-parser.js',
 		'lib/utils.js',
@@ -143,17 +144,23 @@ export async function main(ns) {
 		throw err;
 	}
     
-    if(!ns.args.length) { // Update self & restart
+	// Banner
+	ns.tprint('===================================================');
+	ns.tprint(`Updating: ${args['device']}`);
+	ns.tprint('===================================================');
+
+	// Run
+    if(!args['skip']) { // Update self & restart
         await slowPrint(ns, 'Updating self:');
         await ns.wget(`${src}${updateFile}`, `${dest}${updateFile}`, args['target']);
         await downloadPrint(ns, `${dest}${updateFile}`);
         ns.tprint('');
         await slowPrint(ns, 'Restarting...');
+		ns.tprint('');
         return ns.exec(`${dest}${updateFile}`, args['target'], 1, 1);
     } else { // Update everything else
-        ns.tprint('');
         await slowPrint(ns, 'Downloading scripts:');
-        for(let file in fileList) {
+        for(let file of fileList) {
             await ns.wget(`${src}${file}`, `${dest}${file}`, args['target']);
             await downloadPrint(ns, `${dest}${file}`);
         }
