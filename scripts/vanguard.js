@@ -1,7 +1,7 @@
 import {ArgError, ArgParser} from './scripts/lib/arg-parser';
 
 /**
- * Weaken the device indefinitely.
+ * Weaken a device indefinitely.
  * @params ns {NS} - BitBurner API
  */
 export async function main(ns) {
@@ -10,7 +10,7 @@ export async function main(ns) {
 	let args, counter = 0, orgSecurity, security;
 	const historyLength = 17;
 	const messageHistory = Array(historyLength).fill('');
-	const argParser = new ArgParser('vanguard.js', 'Weaken the device indefinitely.', null, [
+	const argParser = new ArgParser('vanguard.js', 'Weaken a device indefinitely.', null, [
 		{name: 'device', desc: 'Device to weaken, defaults to the current machine', optional: true, default: ns.getHostname(), type: 'string'},
 		{name: 'limit', desc: 'Limit the number of times to run', flags: ['-l', '--limit'], default: Infinity, type: 'num'}
 	]);

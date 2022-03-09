@@ -180,13 +180,13 @@ Options:
 ### [vanguard.js](./scripts/vanguard.js)
 **RAM:** 1.90 GB
 
-Weaken the device indefinitely.
+Weaken a device indefinitely.
 ```
 [home ~/scripts]> run /scripts/vanguard.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/vanguard.js: 
 
-Weaken the device indefinitely.
+Weaken a device indefinitely.
 
 Usage:	run vanguard.js [OPTIONS] [DEVICE]
 	run vanguard.js --help
