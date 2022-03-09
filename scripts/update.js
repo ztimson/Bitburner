@@ -1,135 +1,164 @@
-class ArgParser {
+export class ArgError extends Error {}
+
+export class ArgParser {
 	/**
 	 * Create a unix-like argument parser to extract flags from the argument list. Can also create help messages.
-	 * @param opts - {examples: string[], arguments: {key: string, alias: string, type: string, optional: boolean, desc: string}[], desc: string}
+	 * @param name {string} - Script name
+	 * @param desc {string} - Help text desciption
+	 * @param examples {string[]} - Help text examples
+	 * @param argList {name: string, desc: string, flags: string[], type: string, default: any}[] - Array of CLI arguments
 	 */
-	constructor(opts) {
-		this.examples = opts.examples ?? [];
-		this.arguments = opts.args ?? [];
-		this.description = opts.desc;
+	constructor(name, desc, examples, argList) {
+		this.name = name ?? 'example.js';
+		this.description = desc ?? 'Example description';
+		this.examples = examples || [`${argList.find(arg => !!arg.flags) ? '[OPTIONS] ' : ''}${argList.filter(arg => !arg.flags).map(arg => (arg.optional ? `[${arg.name.toUpperCase()}]` : arg.name.toUpperCase()) + (arg.extras ? '...' : '')).join(' ')}`];
+		this.examples.push('--help');
+		this.argList = argList || [];
+		this.argList.push({name: 'help', desc: 'Display this help message', flags: ['-h', '--help'], type: 'bool'});
 	}
 
 	/**
-	 * Parse the list for arguments & create a dictionary.
-	 * @param args {any[]} - Array of arguments
-	 * @returns Dictionary of matched flags + unmatched args under 'extra'
+	 * Parse an array into an arguments dictionary using the configuration.
+	 * @param args {string[]} - Array of arguments to be parsed
+	 * @returns {object} - Dictionary of arguments with defaults applied
 	 */
 	parse(args) {
-		const req = this.arguments.filter(a => !a.optional && !a.skip);
-		const queue = [...args], parsed = {}, extra = [];
-		for(let i = 0; i < queue.length; i++) {
-			if(queue[i][0] != '-') {
-				extra.push(queue[i]);
-				continue;
-			}
-			let value = null, parse = queue[i].slice(queue[i][1] == '-' ? 2 : 1);
-			if(parse.indexOf('=')) {
+		// Parse arguments
+		const queue = [...args], extra = [];
+		const parsed = this.argList.reduce((acc, arg) => ({...acc, [arg.name]: arg.default ?? (arg.type == 'bool' ? false : null)}), {});
+		// Flags
+		while(queue.length) {
+			let parse = queue.splice(0, 1)[0];
+			if(parse[0] == '-') {
+				// Check combined flags
+				if(parse[1] != '-' && parse.length > 2) {
+					parse = `-${parse[1]}`;
+					queue = parse.substring(1).split('').map(a => `-${a}`).concat(queue);
+				}
+				// Find & add flag
 				const split = parse.split('=');
-				parse = split[0];
-				value = split[1];
+				const arg = this.argList.find(arg => arg.flags && arg.flags.includes(split[0] || parse));
+				if(arg == null) throw new ArgError(`Option unknown: ${parse}`);
+				if(arg.name == 'help') throw new ArgError('Help');
+				const value = arg.type == 'bool' ? true : split[1] || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
+				if(value == null) throw new ArgError(`Option missing value: ${arg.name}`);
+				parsed[arg.name] = value;
+			} else { 
+				// Save for required parsing
+				extra.push(parse);
 			}
-			let arg = this.arguments.find(a => a.key == parse) ?? this.arguments.find(a => a.alias == parse);
-			if(!arg) {
-				extra.push(queue[i]);
-				continue;
-			}
-			if(!value) {
-				value = arg.type == 'bool' ? true : queue[i + 1]; 
-				if(arg.type != 'bool') i++;
-			}
-			parsed[arg.key] = value;
 		}
-		req.forEach((a, i) => parsed[a.key] = extra[i]);
-		extra.splice(0, req.length);
-		return {...parsed, extra};
+		// Arguments
+		this.argList.filter(arg => !arg.flags && !arg.extras).forEach(arg => {
+			if(!arg.optional && !extra.length) throw new ArgError(`Argument missing: ${arg.name.toUpperCase()}`);
+			const value = extra.splice(0, 1)[0];
+			if(value != null) parsed[arg.name] = value;
+		});
+		// Extras
+		const extraKey = this.argList.find(arg => arg.extras)?.name || 'extra';
+		parsed[extraKey] = extra;
+		return parsed;
 	}
 
 	/**
-	 * Create a help message of the expected paramters & usage.
-	 * @param msg {String} - Optional message to display with help
+	 * Create help message from the provided description, examples & argument list.
+	 * @param message {string} - Message to display, defaults to the description
+	 * @returns {string} - Help message 
 	 */
 	help(msg) {
-		let message = '\n\n';
-		message += msg ? msg : this.description;
-		if(this.examples.length) message += '\n\nUsage:\t' + this.examples.join('\n\t');
-		const required = this.arguments.filter(a => !a.optional);
-		if(required.length) message += '\n\n\t' + required.map(a => {
-			const padding = 3 - ~~(a.key.length / 8);
-			return `${a.key}${Array(padding).fill('\t').join('')} ${a.desc}`;
+		// Description
+		let message = '\n\n' + (msg && msg.toLowerCase() != 'help' ? msg : this.description);
+		// Usage
+		if(this.examples.length) message += '\n\nUsage:\t' + this.examples.map(ex => `run ${this.name} ${ex}`).join('\n\t');
+		// Arguments
+		const req = this.argList.filter(a => !a.flags);
+		if(req.length) message += '\n\n\t' + req.map(arg => {
+			const padding = 3 - ~~(arg.name.length / 8);
+			return `${arg.name.toUpperCase()}${Array(padding).fill('\t').join('')} ${arg.desc}`;
 		}).join('\n\t');
-		const optional = this.arguments.filter(a => a.optional);
-		if(optional.length) message += '\n\nOptions:\n\t' + optional.map(a => {
-			const flgs = `${a.alias ? `-${a.alias} ` : ''}--${a.key}${a.type && a.type != 'bool' ? `=${a.type}` : ''}`;
+		// Flags
+		const opts = this.argList.filter(a => a.flags);
+		if(opts.length) message += '\n\nOptions:\n\t' + opts.map(a => {
+			const flgs = a.flags.join(' ');
 			const padding = 3 - ~~(flgs.length / 8);
 			return `${flgs}${Array(padding).fill('\t').join('')} ${a.desc}`;
 		}).join('\n\t');
+		// Print final message
 		return `${message}\n\n`;
 	}
 }
 
 /**
+ * Print a download bar to the terminal.
+ * @params ns {NS} - Bitburner API
+ * @params file - Filename to display with progress bar
+ */
+export async function downloadPrint(ns, file) {
+	const speed = ~~(Math.random() * 100) / 10;
+	const spacing = Array(5 - Math.floor((file.length) / 8)).fill('\t').join('');
+	await slowPrint(ns, `${file}${spacing}[==================>] 100% \t (${speed} MB/s)`);
+}
+
+/**
+ * Print text to the terminal & then delay for a random amount of time to emulate execution time.
+ * @params ns {NS} - Bitburner API
+ * @params message {string} - Text to display
+ * @params min {number} - minimum amount of time to wait after printing text
+ * @params max {number} - maximum amount of time to wait after printing text
+ */
+export async function slowPrint(ns, message, min = 0.5, max = 1.5) {
+	const time = ~~(Math.random() * (max * 1000 - min * 1000)) + min * 1000;
+	ns.tprint(message);
+	await ns.sleep(time);
+}
+
+/**
  * Automatically download all the scripts in the repository.
+ * @params ns {NS} - BitBurner API
  */
 export async function main(ns) {
-    ns.disableLog('ALL');
-    
-    /**
-     * Download a file from the repo with some fancy styling & deplays.
-     * @param file {String} - file name
-     */
-    async function download(file) {
-        await ns.wget(`${src}${file}`, `${dest}${file}`);
-        const speed = ~~((Math.random() * 200) + 100) / 10;
-        ns.tprint(`${file} ${file.length <= 10 ? '\t' : ''}\t [==================>] 100% \t (${speed} MB/s)`);
-    }
-
-    // Initilize script arguments
-	const argParser = new ArgParser({
-		desc: 'Automatically download the latest versions of all scripts using wget.',
-		examples: [
-			'run update.js',
-			'run update.js --help',
-		],
-		args: [
-			{key: 'help', alias: 'h', type: 'bool', optional: true, desc: 'Display help message'},
-		]
-	});
-    const args = argParser.parse(ns.args);
-	if(args['help']) return ns.tprint(argParser.help());
-
     // Setup
-    const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
-    const dest = '/scripts/';
+	ns.disableLog('ALL');
+    const updateFile = 'update.js';
+	const argParser = new ArgParser(updateFile, 'Download the latest script updates from the repository using wget.', null, [
+		{name: 'target', desc: 'Target device to update, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'}
+	]);
+	const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
+    const dest = '/scripts2/';
     const fileList = [
 		'lib/arg-parser.js',
-        'auto-pwn.js',
+		'lib/utils.js',
         'bruteforce.js',
         'crawler.js',
         'miner.js',
 		'network-graph.js',
-        'node-manager.js'
+        'node-manager.js',
+        'rootkit.js'
     ];
-
-    // Update self & restart
-    if(!ns.args.length) {
-        ns.tprint("Updating self:");
-        await ns.sleep(1000);
-        await download('update.js');
-        await ns.sleep(500);
+	let args;
+	try {
+		args = argParser.parse(ns.args || []);
+    } catch(err) {
+		if(err instanceof ArgError) return ns.tprint(argParser.help(err.message));
+		throw err;
+	}
+    
+    if(!ns.args.length) { // Update self & restart
+        await slowPrint(ns, 'Updating self:');
+        await ns.wget(`${src}${updateFile}`, `${dest}${updateFile}`, args['target']);
+        await downloadPrint(ns, `${dest}${updateFile}`);
         ns.tprint('');
-        ns.tprint("Restarting...");
-        await ns.sleep(2000);
-        return ns.run(`${dest}update.js`, 1, 1);
+        await slowPrint(ns, 'Restarting...');
+        return ns.exec(`${dest}${updateFile}`, args['target'], 1, 1);
+    } else { // Update everything else
+        ns.tprint('');
+        await slowPrint(ns, 'Downloading scripts:');
+        for(let file in fileList) {
+            await ns.wget(`${src}${file}`, `${dest}${file}`, args['target']);
+            await downloadPrint(ns, `${dest}${file}`);
+        }
+        ns.tprint('');
+        ns.tprint('Done!');
+        ns.tprint('');
     }
-
-    // Download each file
-    ns.tprint("Downloading scripts:");
-    ns.tprint('');
-    for(const file of fileList) {
-        await ns.sleep(500);
-        await download(file);
-    }
-    ns.tprint('');
-    ns.tprint('✅ Done!');
-    ns.tprint('');
 }

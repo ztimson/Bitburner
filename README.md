@@ -2,7 +2,17 @@
 These scripts are for playing the [open source](https://github.com/danielyxie/bitburner) game [BitBurner](https://danielyxie.github.io/bitburner/)
 
 ## Table of Contents
-[[_TOC_]]
+- [BitBurner - Scripts](#bitburner-scripts)
+  - [Table of Contents](#table-of-contents)
+  - [Quick Start](#quick-start)
+  - [Scripts](#scripts)
+    - [bruteforce.js (WIP)](#bruteforcejs-wip)
+	- [crawler.js](#crawlerjs)
+	- [miner.js](#minerjs)
+	- [network-graph.js](#network-graphjs)
+	- [node-manager.js](#node-managerjs)
+	- [rootkit.js](#rootkitjs)
+	- [update.js](#updatejs)
 
 ## Quick Start
 ```bash
@@ -18,39 +28,17 @@ run scripts/crawler.js /scripts/auto-pwn.js {{TARGET}} /scripts/miner.js
 ```
 
 ## Scripts
-### [auto-pwn.js](./scripts/auto-pwn.js)
-**RAM:** 4.75 GB
-
-Automatically gain root on a target machine. Optionaly after being rooted, a file can be coppied & executed.
-```
-[home ~/]> run scripts/auto-pwn.js --help
-Running script with 1 thread(s), pid 161 and args: ["--help"].
-/scripts/auto-pwn.js: 
-
-Automatically gain root on a target machine. Optionaly after being rooted, a file can be coppied & executed.
-
-Usage:	run auto-pwn.js [TARGET] [SCRIPT] [ARGS]...
-	run auto-pwn.js --help
-
-	TARGET			 Target machine to root. Defaults to localhost
-	SCRIPT			 Script to copy & execute
-	ARGS			 Aditional arguments for SCRIPT. Forward the target with "{{TARGET}}"
-
-Options:
-	-t --threads=num	 Set number of threads for script
-	-h --help		 Display help message
-```
 
 ### [bruteforce.js](./scripts/bruteforce.js) (WIP)
 Attacks target until security falls bellow threshold. Useful for throwing extra compute power & cracking a specific computer.
 
-### [crawler.js](./scripts/crawler.js) (WIP)
-**RAM:** 3.05 GB
+### [crawler.js](./scripts/crawler.js)
+**RAM:** 4.05 GB
 
 Search the network for targets to execute a script against.
 ```
 [home ~/]> run scripts/crawler.js --help
-Running script with 1 thread(s), pid 163 and args: ["--help"].
+Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/crawler.js: 
 
 Search the network for targets to execute a script against.
@@ -59,34 +47,34 @@ Usage:	run crawler.js [OPTIONS] SCRIPT [ARGS]...
 	run crawler.js --help
 
 	SCRIPT			 Script to copy & execute
-	ARGS			 Aditional arguments for SCRIPT. Forward the target with "{{TARGET}}"
+	ARGS			 Arguments for script. Forward the current target with: {{TARGET}}
 
 Options:
-	-d --depth=num		 Number of network hops. Defaults to 3
-	-l --level=num		 Exclude targets with a high hacking level. Defaults to hack level, 0 to disable
-	-p --ports=num		 Exclute targets with too many closed ports
-	-t --threads=num	 Set number of threads for script
-	-h --help		 Display help message
+	-c --cpu		 Number of CPU threads to use with script
+	-d --depth		 Depth to scan to, defaults to 3
+	-l --level		 Exclude targets with higher hack level, defaults to current hack level
+	-p --ports		 Exclute targets with too many closed ports
+	-h --help		 Display this help message
 ```
 
 ### [miner.js](./scripts/miner.js)
-**RAM:** 2.35 GB
+**RAM:** 2.45 GB
 
-Weaken, spoof & hack the target in a loop for money.
+Weaken, Grow, Hack loop to "mine" target machine for money.
 ```
 [home ~/]> run scripts/miner.js --help
-Running script with 1 thread(s), pid 165 and args: ["--help"].
+Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/miner.js: 
 
-Weaken, spoof & hack the target in a loop for money.
+Weaken, Grow, Hack loop to "mine" target machine for money.
 
 Usage:	run miner.js [TARGET]
 	run miner.js --help
 
-	TARGET			 Target to mine. Defaults to localhost
+	TARGET			 Device to mine, defaults to current machine
 
 Options:
-	-h --help		 Display help message
+	-h --help		 Display this help message
 ```
 
 ### [network-graph.js](./scripts/network-graph.js)
@@ -95,7 +83,7 @@ Options:
 Scan the network for devices and display as an ASCII tree.
 ```
 [home ~/]> run /scripts/network-graph.js --help
-Running script with 1 thread(s), pid 138 and args: ["--help"].
+Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/network-graph.js: 
 
 Scan the network for devices and display as an ASCII tree:
@@ -106,13 +94,15 @@ Scan the network for devices and display as an ASCII tree:
   ├─ foodnstuff (ROOTED)
   └─ sigma-cosmetics (ROOTED)
 
-Usage:	run network-graph.js [OPTIONS] 
+Usage:	run network-graph.js [OPTIONS] [TARGET]
 	run network-graph.js --help
+
+	TARGET			 Point to start scan from, defaults to current machine
 
 Options:
 	-d --depth		 Depth to scan to, defaults to 3
-	-f --filter		 Display path to single device
-	-s --start		 Point to start scan from, defaults to current machine
+	-f --filter		 Display devices matching name
+	-r --regex		 Display devices matching pattern
 	-v --verbose		 Displays the required hack level & ports needed to root: (level|port)
 	-h --help		 Display this help message
 ```
@@ -120,38 +110,64 @@ Options:
 ### [node-manager.js](./scripts/node-manager.js)
 **RAM:** 5.70 GB
 
-Buy, upgrade & manage Hacknet nodes automatically.
+Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
 ```
 [home ~/]> run scripts/node-manager.js --help
-Running script with 1 thread(s), pid 166 and args: ["--help"].
+Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/node-manager.js: 
 
 Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
 
-Usage:	run node-manager.js [OPTIONS] LIMIT
-	run node-manager.js --balance 1E6 4
+Usage:	run node-manager.js [OPTIONS] [LIMIT]
 	run node-manager.js --help
 
-	LIMIT			 Limit the number of nodes the manager will buy
+	LIMIT			 Limit the number of nodes the manager will buy, defaults to 8
 
 Options:
-	-b --balance=num	 Prevent spending bellow this point
-	-h --help		 Display help message
+	-b --balance		 Prevent spending bellow point
+	-h --help		 Display this help message
+```
+
+### [rootkit.js](./scripts/rootkit.js)
+**RAM:** 4.75 GB - 4.90 GB <small>(depending on un-commented programs)</small>
+
+Automatically gain root on a target machine. A file can also be uploaded & executed.
+
+Programs can be commented out to lower the cost of running.
+```
+[home ~/]> run scripts/rootkit.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/rootkit.js: 
+
+Automatically gain root on a target machine. A file can also be uploaded & executed.
+
+Usage:	run rootkit.js [OPTIONS] [TARGET] [SCRIPT] [ARGS]...
+	run rootkit.js --help
+
+	TARGET			 Target machine to root, defaults to current machine
+	SCRIPT			 Script to copy & execute
+	ARGS			 Arguments for script. Forward the current target with: {{TARGET}}
+
+Options:
+	-c --cpu		 Number of CPU threads to use with script
+	-h --help		 Display this help message
 ```
 
 ### [update.js](./scripts/update.js)
-**RAM:** 2.60 GB
+**RAM:** 2.95 GB
 
-Automatically download the latest versions of all scripts using wget.
+Download the latest script updates from the repository using wget.
 ```
 [home ~/]> run scripts/update.js --help
-Running script with 1 thread(s), pid 167 and args: ["--help"].
+Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/update.js: 
 
-Automatically download the latest versions of all scripts using wget.
+Download the latest script updates from the repository using wget.
 
 Usage:	run update.js
 	run update.js --help
+
+	TARGET			Target device to update, defaults to current machine
 
 Options:
 	-h --help		 Display help message

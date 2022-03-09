@@ -3,10 +3,11 @@ import {ArgError, ArgParser} from './scripts/lib/arg-parser';
 export async function main(ns) {
 	// Setup
 	ns.disableLog('ALL');
-	const argParser = new ArgParser('network-graph.js', 'Scan the network for devices and display as an ASCII tree:\n home\n  ├─ n00dles (ROOTED)\n  |   └─ max-hardware (80|1)\n  |       └─ neo-net (50|1)\n  ├─ foodnstuff (ROOTED)\n  └─ sigma-cosmetics (ROOTED)', [], [
+	const argParser = new ArgParser('network-graph.js', 'Scan the network for devices and display as an ASCII tree:\n home\n  ├─ n00dles (ROOTED)\n  |   └─ max-hardware (80|1)\n  |       └─ neo-net (50|1)\n  ├─ foodnstuff (ROOTED)\n  └─ sigma-cosmetics (ROOTED)', null, [
+		{name: 'target', desc: 'Point to start scan from, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'},
 		{name: 'depth', desc: 'Depth to scan to, defaults to 3', flags: ['-d', '--depth'], default: Infinity, type: 'num'},
-        {name: 'filter', desc: 'Display path to single device', flags: ['-f', '--filter'], type: 'string'},
-		{name: 'start', desc: 'Point to start scan from, defaults to current machine', flags: ['-s', '--start'], default: ns.getHostname(), type: 'string'},
+        {name: 'filter', desc: 'Display devices matching name', flags: ['-f', '--filter'], type: 'string'},
+		{name: 'regex', desc: 'Display devices matching pattern', flags: ['-r', '--regex'], type: 'string'},
 		{name: 'verbose', desc: 'Displays the required hack level & ports needed to root: (level|port)', flags: ['-v', '--verbose'], type: 'bool'},
 	]);
 	let args;
@@ -18,6 +19,38 @@ export async function main(ns) {
 	}
 
 	/**
+	 * Prune tree down to devices that match name or pattern.
+	 * @param tree {object} - Tree to search
+	 * @param find {string} - Device name or pattern to search for
+	 * @param regex {boolean} - True to use regex, false for raw check
+	 * @returns {object} - Pruned tree
+	 */
+	function filter(tree, find, regex = false) {
+		const found = new Set();
+		function buildWhitelist(tree, find, path = []) {
+			const keys = Object.keys(tree);
+			if(!keys.length) return;
+			Object.keys(tree).forEach(n => {
+				const matches = regex ? new RegExp(find).test(n) : n == find;
+				if(n == 'n00dles') console.log(n, find, matches);
+				if(matches) {
+					found.add(n);
+					path.forEach(p => found.add(p));
+				}
+				buildWhitelist(tree[n], find, [...path, n]);
+			})
+		}
+		function prune(tree, whitelist) {
+			Object.keys(tree).forEach(n => {
+				if(Object.keys(tree[n]).length) prune(tree[n], whitelist);
+				if(!whitelist.includes(n)) delete tree[n];
+			});
+		}
+		buildWhitelist(tree, find);
+		prune(tree, Array.from(found));
+	}
+
+	/**
 	 * Recursively search network & build a tree
 	 * @param host {string} - Point to scan from
 	 * @param depth {number} - Current scanning depth
@@ -25,9 +58,9 @@ export async function main(ns) {
 	 * @returns Dicionary of discovered devices
 	 */
 	function scan(host, depth = 1, blacklist = [host]) {
-		if(depth >= args['depth']) return {};
+		if(depth > args['depth']) return {};
 		const localTargets = ns.scan(host).filter(target => !blacklist.includes(target));
-		blacklist = blacklist.concat(localTargets);
+		blacklist = [...blacklist, ...localTargets];
 		return localTargets.reduce((acc, target) => {
 			const info = ns.getServer(target);
 			const verb = args['verbose'] ? ` (${info.hasAdminRights ? 'ROOTED' : `${info.requiredHackingSkill}|${info.numOpenPortsRequired}`})` : '';
@@ -35,29 +68,6 @@ export async function main(ns) {
 			acc[name] = scan(target, depth + 1, blacklist);
 			return acc;
 		}, {});
-	}
-
-	/**
-	 * Search tree for path to device.
-	 * @param tree {object} - Tree to search
-	 * @param find {string} - Device to search for
-	 * @returns {object} - Path to device
-	 */
-	function filter(tree, find) {
-		function filter(tree, find, path = []) {
-			return Object.keys(tree).flatMap(n => {
-				if(n.indexOf(find) == 0) return [...path, n];
-				if(Object.keys(n).length) return filter(tree[n], find, [...path, n]);
-				return null;
-			}).filter(p => !!p);
-		}
-		let whitelist = filter(tree, find), acc = {}, next = acc;
-		while(whitelist.length) {
-			const n = whitelist.splice(0, 1);
-			next[n] = {};
-			next = next[n];
-		}
-		return acc;
 	}
 
 	/**
@@ -75,9 +85,10 @@ export async function main(ns) {
 	}
 
 	// Run
-	let found = scan(args['start'], args['verbose']);
-	if(args['filter']) found = filter(found, args['filter']);
-	ns.tprint(args['start']);
+	ns.tprint(args['target']);
+	const found = scan(args['target']);
+	if(args['regex']) filter(found, args['regex'], true);
+	else if(args['filter']) filter(found, args['filter']);
 	render(found);
 	ns.tprint('');
 }

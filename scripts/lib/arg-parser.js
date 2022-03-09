@@ -11,15 +11,10 @@ export class ArgParser {
 	constructor(name, desc, examples, argList) {
 		this.name = name ?? 'example.js';
 		this.description = desc ?? 'Example description';
-		this.examples = [
-			...examples,
-			`[OPTIONS] ${argList.filter(arg => !arg.flags).map(arg => arg.name.toUpperCase())}`,
-			'--help'
-		];
-		this.argList = [
-			...argList,
-			{name: 'help', desc: 'Display this help message', flags: ['-h', '--help'], type: 'bool'}
-		];
+		this.examples = examples || [`${argList.find(arg => !!arg.flags) ? '[OPTIONS] ' : ''}${argList.filter(arg => !arg.flags).map(arg => (arg.optional ? `[${arg.name.toUpperCase()}]` : arg.name.toUpperCase()) + (arg.extras ? '...' : '')).join(' ')}`];
+		this.examples.push('--help');
+		this.argList = argList || [];
+		this.argList.push({name: 'help', desc: 'Display this help message', flags: ['-h', '--help'], type: 'bool'});
 	}
 
 	/**
@@ -41,9 +36,11 @@ export class ArgParser {
 					queue = parse.substring(1).split('').map(a => `-${a}`).concat(queue);
 				}
 				// Find & add flag
-				const arg = this.argList.find(arg => arg.flags && arg.flags.includes(parse));
-				if(arg == null) throw new ArgError(`Unknown option: ${parse}`);
-				const value = arg.type == 'bool' ? true : parse.split('=')[1] || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
+				const split = parse.split('=');
+				const arg = this.argList.find(arg => arg.flags && arg.flags.includes(split[0] || parse));
+				if(arg == null) throw new ArgError(`Option unknown: ${parse}`);
+				if(arg.name == 'help') throw new ArgError('Help');
+				const value = arg.type == 'bool' ? true : split[1] || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
 				if(value == null) throw new ArgError(`Option missing value: ${arg.name}`);
 				parsed[arg.name] = value;
 			} else { 
@@ -52,13 +49,14 @@ export class ArgParser {
 			}
 		}
 		// Arguments
-		this.argList.filter(arg => !arg.flags).forEach(arg => {
-			if(!extra.length) throw new ArgError(`Argument missing: ${arg.name}`);
-			parsed[arg.name] = extra.splice(0, 1)[0];
+		this.argList.filter(arg => !arg.flags && !arg.extras).forEach(arg => {
+			if(!arg.optional && !extra.length) throw new ArgError(`Argument missing: ${arg.name.toUpperCase()}`);
+			const value = extra.splice(0, 1)[0];
+			if(value != null) parsed[arg.name] = value;
 		});
 		// Extras
-		if(extra.length) parsed['extra'] = extra;
-		if(parsed['help']) throw new ArgError();
+		const extraKey = this.argList.find(arg => arg.extras)?.name || 'extra';
+		parsed[extraKey] = extra;
 		return parsed;
 	}
 
@@ -69,7 +67,7 @@ export class ArgParser {
 	 */
 	help(msg) {
 		// Description
-		let message = '\n\n' + (msg ? msg : this.description);
+		let message = '\n\n' + (msg && msg.toLowerCase() != 'help' ? msg : this.description);
 		// Usage
 		if(this.examples.length) message += '\n\nUsage:\t' + this.examples.map(ex => `run ${this.name} ${ex}`).join('\n\t');
 		// Arguments
