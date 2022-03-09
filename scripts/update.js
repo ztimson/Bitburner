@@ -143,25 +143,27 @@ export async function main(ns) {
 		if(err instanceof ArgError) return ns.tprint(argParser.help(err.message));
 		throw err;
 	}
-    
-	// Banner
-	ns.tprint('===================================================');
-	ns.tprint(`Updating: ${args['device']}`);
-	ns.tprint('===================================================');
+
+	if(!args['skip'] || args['skip'] != 32479805) {
+		// Banner
+		ns.tprint('===================================================');
+		ns.tprint(`Updating: ${args['device']}`);
+		ns.tprint('===================================================');
+	}
 
 	// Run
-    if(!args['skip']) { // Update self & restart
+    if(!args['skip']) { // Update self & restart  
         await slowPrint(ns, 'Updating self:');
-        await ns.wget(`${src}${updateFile}`, `${dest}${updateFile}`, args['target']);
+        await ns.wget(`${src}${updateFile}`, `${dest}${updateFile}`, args['device']);
         await downloadPrint(ns, `${dest}${updateFile}`);
         ns.tprint('');
         await slowPrint(ns, 'Restarting...');
 		ns.tprint('');
-        return ns.exec(`${dest}${updateFile}`, args['target'], 1, 1);
+        return ns.exec(`${dest}${updateFile}`, args['device'], 1, 32479805);
     } else { // Update everything else
         await slowPrint(ns, 'Downloading scripts:');
         for(let file of fileList) {
-            await ns.wget(`${src}${file}`, `${dest}${file}`, args['target']);
+            await ns.wget(`${src}${file}`, `${dest}${file}`, args['device']);
             await downloadPrint(ns, `${dest}${file}`);
         }
         ns.tprint('');
