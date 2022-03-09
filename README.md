@@ -15,17 +15,22 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
 	- [update.js](#updatejs)
 
 ## Quick Start
+
 ```bash
-# Download & run the update script ingame
+# Download the update script in-game
 wget https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/update.js scripts/update.js
+
+# Run the update script (Repeat this to pull this repository in the future)
 run scripts/update.js
 
 # Start the node manager with 8 nodes
 run scripts/node-manager.js 8
 
 # Chain the crawler, auto-pwner & miner to hack everything on the network
-run scripts/crawler.js /scripts/auto-pwn.js {{TARGET}} /scripts/miner.js
+run scripts/crawler.js /scripts/rootkit.js {{TARGET}} /scripts/miner.js
 ```
+
+Learn more about the [availible scripts](#scripts) bellow or pass the `--help` flag to any of the included scripts in-game.
 
 ## Scripts
 
