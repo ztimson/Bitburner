@@ -35,9 +35,6 @@ Learn more about the [availible scripts](#scripts) bellow or pass the `--help` f
 
 ## Scripts
 
-### [bruteforce.js](./scripts/bruteforce.js) (WIP)
-Attacks target until security falls bellow threshold. Useful for throwing extra compute power & cracking a specific computer.
-
 ### [crawler.js](./scripts/crawler.js)
 **RAM:** 4.05 GB
 
