@@ -48,19 +48,21 @@ export async function main(ns) {
 	ns.tprint(`Rooting: ${args['device']}`);
 	await slowPrint(ns, '===================================================');
 
+	let spacer = false;
 	try {
 		// Run exploits
-		await slowPrint(ns, `Attacking over SSH (${args['device']}:22)...`, 1, 2);
 		ns.brutessh(args['device']);
-		await slowPrint(ns, `Attacking over FTP (${args['device']}:24)...`, 1, 2);
+		await slowPrint(ns, `Attacking over SSH (${args['device']}:22)...`, 1, 2);
+		spacer = true;
 		ns.ftpcrack(args['device']);
-		await slowPrint(ns, `Attacking over SMTP (${args['device']}:25)...`, 1, 2);
+		await slowPrint(ns, `Attacking over FTP (${args['device']}:24)...`, 1, 2);
 		ns.relaysmtp(args['device']);
+		await slowPrint(ns, `Attacking over SMTP (${args['device']}:25)...`, 1, 2);
 	} catch {
 	} finally {
 		try {
 			// Attempt root
-			ns.tprint('');
+			if(spacer) ns.tprint('');
 			ns.nuke(args['device'])
 			ns.tprint(`Root: Success!`);
 			ns.tprint('');
