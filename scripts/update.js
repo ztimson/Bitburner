@@ -121,8 +121,9 @@ export async function main(ns) {
 	ns.disableLog('ALL');
     const updateFile = 'update.js';
 	const argParser = new ArgParser(updateFile, 'Download the latest script updates from the repository using wget.', null, [
-		{name: 'skip', desc: 'Skip updating self (for debugging)', optional: true, type: 'bool'},
-		{name: 'device', desc: 'Device to update, defaults to current machine', flags: ['-d', '--device'], default: ns.getHostname(), type: 'string'}
+		{name: 'device', desc: 'Device to update, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'},
+		{name: 'skip-self', desc: 'Skip updating self (for debugging & used internally)', flags: ['--skip-self'], type: 'bool'},
+		{name: 'no-banner', desc: 'Hide the banner (Used internally)', flags: ['--no-banner'], type: 'bool'}
 	]);
 	const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
     const dest = '/scripts/';
@@ -145,7 +146,7 @@ export async function main(ns) {
 		throw err;
 	}
 
-	if(!args['skip'] || args['skip'] != 278024) {
+	if(!args['no-banner']) {
 		// Banner
 		ns.tprint('===================================================');
 		ns.tprint(`Updating: ${args['device']}`);
@@ -153,13 +154,13 @@ export async function main(ns) {
 	}
 
 	// Run
-    if(!args['skip']) { // Update self & restart  
+    if(!args['skip-self']) { // Update self & restart  
         await slowPrint(ns, 'Updating self:');
         await ns.wget(`${src}${updateFile}`, `${dest}${updateFile}`, args['device']);
         await downloadPrint(ns, `${dest}${updateFile}`);
         ns.tprint('');
         await slowPrint(ns, 'Restarting...');
-        const pid = ns.exec(`${dest}${updateFile}`, args['device'], 1, 278024);
+        const pid = ns.exec(`${dest}${updateFile}`, args['device'], 1, '--skip-self', '--no-banner');
 		if(pid == 0) ns.tprint('Failed');
 		else ns.tprint('Complete');
 		return await slowPrint(ns, '');
