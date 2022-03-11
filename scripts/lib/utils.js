@@ -21,3 +21,18 @@ export async function slowPrint(ns, message, min = 0.5, max = 1.5) {
 	ns.tprint(message);
 	await ns.sleep(time);
 }
+
+/**
+ * Write a command to the terminal.
+ * @params command {string} - Command that will be run
+ * @returns {string} - Response
+ */
+export async function terminal(command) {
+	// Get Terminal
+    const cli = eval('document').querySelector("#terminal-input"); // Terminal
+    const key = Object.keys(cli)[1];
+
+	// Send command
+    cli[key].onChange({ target: {value: command} });
+	cli[key].onKeyDown({ keyCode: 13, preventDefault: () => {} });
+}

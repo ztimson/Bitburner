@@ -6,6 +6,7 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
   - [Scripts](#scripts)
+	- [connect.js](#connectjs)
 	- [crawler.js](#crawlerjs)
 	- [miner.js](#minerjs)
 	- [network-graph.js](#network-graphjs)
@@ -29,11 +30,37 @@ run scripts/node-manager.js 8
 # Chain the crawler, rootkit & miner to hack everything on the network
 alias hackAll="run scripts/crawler.js /scripts/rootkit.js {{TARGET}} /scripts/miner.js"
 hackAll
+
+# Identify & install a backdoor on CSEC
+run scripts/network-graph.js -f CSEC
+run scripts/rootkit.js CSEC
+run scripts/connect.js CSEC
+backdoor
 ```
 
 Learn more about the [availible scripts](#scripts) bellow or pass the `--help` flag to any of the included scripts in-game.
 
 ## Scripts
+
+### [connect.js](./scripts/connect.js)
+**RAM:** 1.85 GB
+
+Connect to a device on a different network.
+```
+[home ~/]> run /scripts/connect.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/connect.js: 
+
+Connect to a device on a different network.
+
+Usage:	run connect.js DEVICE
+	run connect.js --help
+
+	DEVICE			 Device to connect to
+
+Options:
+	-h --help		 Display this help message
+```
 
 ### [crawler.js](./scripts/crawler.js)
 **RAM:** 4.05 GB
