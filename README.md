@@ -184,7 +184,7 @@ Options:
 ```
 
 ### [update.js](./scripts/update.js)
-**RAM:** 2.95 GB
+**RAM:** 2.65 GB
 
 Download the latest script updates from the repository using wget.
 ```
@@ -194,13 +194,14 @@ Running script with 1 thread(s), pid 1 and args: ["--help"].
 
 Download the latest script updates from the repository using wget.
 
-Usage:	run update.js [OPTIONS] [SKIP]
+Usage:	run update.js [OPTIONS] [DEVICE]
 	run update.js --help
 
-	SKIP			 Skip updating self (for debugging)
+	DEVICE			 Device to update, defaults to current machine
 
 Options:
-	-d --device		 Device to update, defaults to current machine
+	--skip-self		 Skip updating self (for debugging & used internally)
+	--no-banner		 Hide the banner (Used internally)
 	-h --help		 Display this help message
 ```
 

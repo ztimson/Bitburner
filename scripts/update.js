@@ -136,7 +136,8 @@ export async function main(ns) {
         'miner.js',
 		'network-graph.js',
         'node-manager.js',
-        'rootkit.js'
+        'rootkit.js',
+		'vanguard.js'
     ];
 	let args;
 	try {
@@ -160,7 +161,7 @@ export async function main(ns) {
         await downloadPrint(ns, `${dest}${updateFile}`);
         ns.tprint('');
         await slowPrint(ns, 'Restarting...');
-        const pid = ns.exec(`${dest}${updateFile}`, args['device'], 1, '--skip-self', '--no-banner');
+        const pid = ns.run(`${dest}${updateFile}`, 1, args['device'], '--skip-self', '--no-banner');
 		if(pid == 0) ns.tprint('Failed');
 		else ns.tprint('Complete');
 		return await slowPrint(ns, '');
@@ -174,4 +175,8 @@ export async function main(ns) {
         ns.tprint('Done!');
         ns.tprint('');
     }
+}
+
+export function autocomplete(data) {
+	return [...data.servers];
 }
