@@ -129,6 +129,7 @@ export async function main(ns) {
     const fileList = [
 		'lib/arg-parser.js',
 		'lib/utils.js',
+		'connect.js',
         'bruteforce.js',
         'crawler.js',
         'miner.js',
