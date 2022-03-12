@@ -32,7 +32,7 @@ export function main(ns) {
 		const newDevices = ns.scan(current).filter(d => !blacklist.has(d));
 		if(newDevices.length == 0) return [];
 		if(newDevices.find(d => d == device)) return [...path, device];
-		return newDevices.map(d => find(device, d, [...path, d], all)).find(p => p && p.length);
+		return newDevices.map(d => find(device, d, [...path, d], blacklist)).find(p => p && p.length);
 	}
 
 	// Run
