@@ -8,9 +8,9 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
   - [Scripts](#scripts)
 	- [connect.js](#connectjs)
 	- [crawler.js](#crawlerjs)
+	- [hacknet-manager.js](#hacknet-managerjs)
 	- [miner.js](#minerjs)
 	- [network-graph.js](#network-graphjs)
-	- [node-manager.js](#node-managerjs)
 	- [rootkit.js](#rootkitjs)
 	- [update.js](#updatejs)
 	- [vanguard.js](#vanguardjs)
@@ -87,6 +87,27 @@ Options:
 	-h --help		 Display this help message
 ```
 
+### [hacknet-manager.js](./scripts/hacknet-manager.js)
+**RAM:** 5.70 GB
+
+Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
+```
+[home ~/]> run scripts/hacknet-manager.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/hacknet-manager.js: 
+
+Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
+
+Usage:	run hacknet-manager.js [OPTIONS] [LIMIT]
+	run hacknet-manager.js --help
+
+	LIMIT			 Limit the number of nodes the manager will buy, defaults to 8
+
+Options:
+	-b --balance		 Prevent spending bellow point
+	-h --help		 Display this help message
+```
+
 ### [miner.js](./scripts/miner.js)
 **RAM:** 2.45 GB
 
@@ -134,27 +155,6 @@ Options:
 	-f --filter		 Display devices matching name
 	-r --regex		 Display devices matching pattern
 	-v --verbose		 Displays the required hack level & ports needed to root: (level|port)
-	-h --help		 Display this help message
-```
-
-### [node-manager.js](./scripts/node-manager.js)
-**RAM:** 5.70 GB
-
-Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
-```
-[home ~/]> run scripts/node-manager.js --help
-Running script with 1 thread(s), pid 1 and args: ["--help"].
-/scripts/node-manager.js: 
-
-Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
-
-Usage:	run node-manager.js [OPTIONS] [LIMIT]
-	run node-manager.js --help
-
-	LIMIT			 Limit the number of nodes the manager will buy, defaults to 8
-
-Options:
-	-b --balance		 Prevent spending bellow point
 	-h --help		 Display this help message
 ```
 

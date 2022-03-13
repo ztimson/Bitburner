@@ -133,9 +133,9 @@ export async function main(ns) {
 		'connect.js',
         'bruteforce.js',
         'crawler.js',
+		'hacknet-manager.js',
         'miner.js',
 		'network-graph.js',
-        'node-manager.js',
         'rootkit.js',
 		'vanguard.js'
     ];

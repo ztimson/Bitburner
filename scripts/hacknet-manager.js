@@ -10,7 +10,7 @@ export async function main(ns) {
 	const historyLength = 17;
 	const messageHistory = Array(historyLength).fill('');
 	let args, nodeCount = ns.hacknet.numNodes();
-	const argParser = new ArgParser('node-manager.js', 'Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.', null, [
+	const argParser = new ArgParser('hacknet-manager.js', 'Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.', null, [
 		{name: 'limit', desc: 'Limit the number of nodes the manager will buy, defaults to 8', optional: true, default: 8, type: 'num'},
 		{name: 'balance', desc: 'Prevent spending bellow point', flags: ['-b', '--balance'], type: 'num'}
     ]);
@@ -29,7 +29,7 @@ export async function main(ns) {
 	function log(message) {
 		ns.clearLog();
 		ns.print('===================================================');
-		ns.print(`Node Manager: ${nodeCount}/${args['limit']} Nodes`);
+		ns.print(`Hacknet Manager: ${nodeCount}/${args['limit']} Nodes`);
 		ns.print('===================================================');
 		if(message != null) messageHistory.push(message);
 		messageHistory.splice(0, messageHistory.length - historyLength);
