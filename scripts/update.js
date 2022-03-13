@@ -131,7 +131,6 @@ export async function main(ns) {
 		'lib/arg-parser.js',
 		'lib/utils.js',
 		'connect.js',
-        'bruteforce.js',
         'crawler.js',
 		'hacknet-manager.js',
         'miner.js',
