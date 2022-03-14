@@ -7,14 +7,16 @@ export class ArgParser {
 	 * @param desc {string} - Help text desciption
 	 * @param examples {string[]} - Help text examples
 	 * @param argList {name: string, desc: string, flags: string[], type: string, default: any}[] - Array of CLI arguments
+	 * @param allowUnknown {boolean} - Allow unknown flags
 	 */
-	constructor(name, desc, examples, argList) {
+	constructor(name, desc, examples, argList, allowUnknown = false) {
 		this.name = name ?? 'example.js';
 		this.description = desc ?? 'Example description';
 		this.examples = examples || [`${argList.find(arg => !!arg.flags) ? '[OPTIONS] ' : ''}${argList.filter(arg => !arg.flags).map(arg => (arg.optional ? `[${arg.name.toUpperCase()}]` : arg.name.toUpperCase()) + (arg.extras ? '...' : '')).join(' ')}`];
 		this.examples.push('--help');
 		this.argList = argList || [];
 		this.argList.push({name: 'help', desc: 'Display this help message', flags: ['-h', '--help'], type: 'bool'});
+		this.allowUnknown = allowUnknown;
 	}
 
 	/**
@@ -38,7 +40,11 @@ export class ArgParser {
 				// Find & add flag
 				const split = parse.split('=');
 				const arg = this.argList.find(arg => arg.flags && arg.flags.includes(split[0] || parse));
-				if(arg == null) throw new ArgError(`Option unknown: ${parse}`);
+				if(arg == null) {
+					if(!this.allowUnknown) throw new ArgError(`Option unknown: ${parse}`);
+					extra.push(parse);
+					continue;
+				}
 				if(arg.name == 'help') throw new ArgError('Help');
 				const value = arg.type == 'bool' ? true : split[1] || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
 				if(value == null) throw new ArgError(`Option missing value: ${arg.name}`);

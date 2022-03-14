@@ -13,7 +13,7 @@ export async function main(ns) {
 		{name: 'script', desc: 'Script to copy & execute', optional: true, type: 'string'},
         {name: 'args', desc: 'Arguments for script. Forward the current target with: {{TARGET}}', optional: true, extras: true, type: 'string'},
 		{name: 'cpu', desc: 'Number of CPU threads to use with script', flags: ['-c', '--cpu'], type: 'num'},
-	]);
+	], true);
 	let args;
 	try {
 		args = argParser.parse(ns.args);
