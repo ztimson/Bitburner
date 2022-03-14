@@ -129,6 +129,7 @@ export async function main(ns) {
     const dest = '/scripts/';
     const fileList = [
 		'lib/arg-parser.js',
+		'lib/logger.js',
 		'lib/utils.js',
 		'connect.js',
         'crawler.js',
