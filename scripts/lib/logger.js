@@ -1,18 +1,16 @@
 export class Logger {
-	historyLen = 17;
+	historyLen = 19;
 	history = [];
 
     /**
      * Create a nicer log with a banner.
      * @param ns {NS} - BitBurner API
-     * @param titleFn {Function} - Function to generate title
-     * @param extraFns {Function[]} - Extra info to put in the header
+     * @param lineFns {Function[]} - Functions to generate a line (Seperated by a linebreak)
      */
-	constructor(ns, titleFn, extraFns = []) {
+	constructor(ns, lineFns = []) {
 		this.ns = ns;
-		this.title = titleFn;
-		this.extra = extraFns;
-		this.historyLen -= extraFns.length * 2;
+		this.fns = lineFns;
+		this.historyLen -= fns.length * 2;
 		this.history = Array(this.historyLen).fill('');
 	}
 
@@ -28,10 +26,8 @@ export class Logger {
      */
 	header() {
 		this.lineBreak();
-		this.ns.print(this.title());
-		this.lineBreak();
-		this.extra.forEach(extra => {
-			this.ns.print(extra());
+		this.fns.forEach(fn => {
+			this.ns.print(fn());
 			this.lineBreak();
 		});
 	}
