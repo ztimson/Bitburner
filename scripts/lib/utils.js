@@ -33,10 +33,6 @@ export async function downloadPrint(ns, file) {
 	await slowPrint(ns, `${file}${spacing}[==================>] 100%\t(${speed} MB/s)`);
 }
 
-export function flatten(object) {
-
-}
-
 /**
  * **Impure:** Prune tree down to keys which pass function
  * @param tree {object} - Tree to search
