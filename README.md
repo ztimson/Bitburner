@@ -6,13 +6,14 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
   - [Scripts](#scripts)
-	- [connect.js](#connectjs)
-	- [crawler.js](#crawlerjs)
-	- [hacknet-manager.js](#hacknet-managerjs)
-	- [miner.js](#minerjs)
-	- [network-graph.js](#network-graphjs)
-	- [rootkit.js](#rootkitjs)
-	- [update.js](#updatejs)
+    - [connect.js](#connectjs)
+    - [copy.js](#copyjs)
+    - [crawler.js](#crawlerjs)
+    - [hacknet-manager.js](#hacknet-managerjs)
+    - [miner.js](#minerjs)
+    - [network-graph.js](#network-graphjs)
+    - [rootkit.js](#rootkitjs)
+    - [update.js](#updatejs)
 
 ## Quick Start
 
@@ -58,6 +59,29 @@ Usage:	run connect.js DEVICE
 	DEVICE			 Device to connect to
 
 Options:
+	-h --help		 Display this help message
+```
+
+### [copy.js](./scripts/copy.js)
+**RAM:** 3.50 GB
+
+Copy a file/script to a device along with any dependencies.
+```
+[home ~/]> run scripts/copy.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/copy.js: 
+
+Copy a file/script to a device along with any dependencies.
+
+Usage:	run copy.js [OPTIONS] FILE DEVICE
+	run copy.js --help
+
+	FILE			 File to copy
+	DEVICE			 Device to copy file(s) to
+
+Options:
+	-d --no-deps		 Skip copying dependencies
+	-s --silent		 Surpress program output
 	-h --help		 Display this help message
 ```
 

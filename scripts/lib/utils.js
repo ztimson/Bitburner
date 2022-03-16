@@ -19,7 +19,42 @@ export async function copyWithDependencies(ns, src, device) {
 		}
 	}
 	await ns.scp(found, device);
-	return found;
+	return found.reverse();
+}
+
+/**
+ * Display a percentage bar in the terminal which updates in real time.
+ *
+ * **Example:**
+ *
+ * `/script/test.js [||||||||||----------] 50% (24.2 MB/s)`
+ *
+ * @param ns {NS} - BitBurner API
+ * @param name {string} - Name to display at the begging of bar
+ * @param time {number} - Time it takes for bar to fill
+ */
+export async function percentageBar(ns, name, time = 1) {
+	const text = (percentage, speed) => {
+		const p = percentage > 1 ? 1 : percentage < 0 ? 0 : percentage;
+		const spacer = Array(30 - name.length).fill(' ').join('');
+		const bar = `[${Array(Math.round(20 * p)).fill('|').join('')}${Array(Math.round(20 * (1 - p))).fill('-').join('')}]`;
+		const percent = `${Math.round(p * 100)}`;
+		const percentSpacer = Array(3 - percent.length).fill(' ').join('');
+		return `${name}${spacer}${bar} ${percentSpacer}${percent}%${speed != null ? ` (${speed} MB/s)` : ''}`;
+	}
+
+	let speed = Math.round((20 + Math.random() * 10) * 10) / 10;
+	ns.tprint(text(1, speed)); // Display the complete bar (This is the one that will be shown on redraws)
+	await ns.sleep(25); // Wait for the new line to display
+	const terminalOutput = eval('document').querySelectorAll('[class*="jss"].MuiTypography-body1');
+	const updateLine = terminalOutput[terminalOutput.length - 1];
+	const script = updateLine.innerText.split(': ')[0];
+	for(let p = 0; p <= 100; p++) {
+		await ns.sleep((time * 1000) / 100);
+		if(p % 5 == 0) speed = Math.round((speed + (Math.random() > 0.5 ? 1 : -1) * Math.random()) * 10) / 10;
+		updateLine.innerText = `${script}: ${text(p / 100, p == 0 ? 0 : speed)}`;
+	}
+	return;
 }
 
 /**
