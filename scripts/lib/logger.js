@@ -12,6 +12,7 @@ export class Logger {
 		this.fns = lineFns;
 		this.historyLen -= fns.length * 2;
 		this.history = Array(this.historyLen).fill('');
+		this.log();
 	}
 
     /**

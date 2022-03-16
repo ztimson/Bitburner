@@ -43,7 +43,7 @@ export class ArgParser {
 				const value = arg.type == 'bool' ? true : split[1] || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
 				if(value == null) throw new ArgError(`Option missing value: ${arg.name}`);
 				parsed[arg.name] = value;
-			} else { 
+			} else {
 				// Save for required parsing
 				extra.push(parse);
 			}
@@ -63,7 +63,7 @@ export class ArgParser {
 	/**
 	 * Create help message from the provided description, examples & argument list.
 	 * @param message {string} - Message to display, defaults to the description
-	 * @returns {string} - Help message 
+	 * @returns {string} - Help message
 	 */
 	help(msg) {
 		// Description
@@ -136,8 +136,7 @@ export async function main(ns) {
 		'hacknet-manager.js',
         'miner.js',
 		'network-graph.js',
-        'rootkit.js',
-		'vanguard.js'
+        'rootkit.js'
     ];
 	let args;
 	try {
@@ -155,7 +154,7 @@ export async function main(ns) {
 	}
 
 	// Run
-    if(!args['skip-self']) { // Update self & restart  
+    if(!args['skip-self']) { // Update self & restart
         await slowPrint(ns, 'Updating self:');
         await ns.wget(`${src}${updateFile}`, `${dest}${updateFile}`, args['device']);
         await downloadPrint(ns, `${dest}${updateFile}`);

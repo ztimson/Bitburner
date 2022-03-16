@@ -13,7 +13,6 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
 	- [network-graph.js](#network-graphjs)
 	- [rootkit.js](#rootkitjs)
 	- [update.js](#updatejs)
-	- [vanguard.js](#vanguardjs)
 
 ## Quick Start
 
@@ -151,10 +150,12 @@ Usage:	run network-graph.js [OPTIONS] [DEVICE]
 	DEVICE			 Point to start scan from, defaults to current machine
 
 Options:
-	-d --depth		 Depth to scan to, defaults to 3
-	-f --filter		 Display devices matching name
-	-r --regex		 Display devices matching pattern
-	-v --verbose		 Displays the required hack level & ports needed to root: (level|port)
+	-d --depth		 Depth to scan to, defaults is 3
+	-f --filter		 Filter to device matching name
+	-e --regex		 Filter to devices matching pattern
+	-r --rooted		 Filter to devices that have been rooted
+	-n --not-rooted		 Filter to devices that have not been rooted
+	-v --verbose		 Display the required hack level & number of ports to root: (level|port)
 	-h --help		 Display this help message
 ```
 
@@ -202,26 +203,5 @@ Usage:	run update.js [OPTIONS] [DEVICE]
 Options:
 	--skip-self		 Skip updating self (for debugging & used internally)
 	--no-banner		 Hide the banner (Used internally)
-	-h --help		 Display this help message
-```
-
-### [vanguard.js](./scripts/vanguard.js)
-**RAM:** 1.90 GB
-
-Weaken a device indefinitely.
-```
-[home ~/scripts]> run /scripts/vanguard.js --help
-Running script with 1 thread(s), pid 1 and args: ["--help"].
-/scripts/vanguard.js: 
-
-Weaken a device indefinitely.
-
-Usage:	run vanguard.js [OPTIONS] [DEVICE]
-	run vanguard.js --help
-
-	DEVICE			 Device to weaken, defaults to the current machine
-
-Options:
-	-l --limit		 Limit the number of times to run
 	-h --help		 Display this help message
 ```

@@ -10,7 +10,7 @@ export async function main(ns) {
 	const historyLength = 15;
 	const messageHistory = Array(historyLength).fill('');
 	let maxBalance, balance, minSecurity, security;
-	const argParser = new ArgParser('miner.js', 'Weaken, Grow, Hack loop to "mine" machine for money.', null, [
+	const argParser = new ArgParser('miner.js', 'Weaken, Grow, Hack loop to "mine" machine for money. Tail for live updates', null, [
 		{name: 'device', desc: 'Device to mine, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'}
 	]);
 	let args;
