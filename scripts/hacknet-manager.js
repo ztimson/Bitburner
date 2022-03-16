@@ -1,4 +1,5 @@
-import {ArgError, ArgParser} from './scripts/lib/arg-parser';
+import {ArgError, ArgParser} from '/scripts/lib/arg-parser';
+import {Logger} from '/scripts/lib/logger';
 
 /**
  * Buy, upgrade & manage Hacknet nodes automatically.
@@ -11,13 +12,13 @@ export async function main(ns) {
 		{name: 'limit', desc: 'Limit the number of nodes the manager will buy, defaults to 8', optional: true, default: 8, type: 'num'},
 		{name: 'balance', desc: 'Prevent spending bellow point', flags: ['-b', '--balance'], type: 'num'},
 		{name: 'sleep', desc: 'Amount of time to wait between purchases, defaults to 1 (second)', flags: ['-s', '--sleep'], default: 1, type: 'num'}
-    ]);
+	]);
 
 	try {
 		// Run
 		const args = argParser.parse(ns.args);
 		let nodeCount = ns.hacknet.numNodes();
-		const logger = new Logger(ns, () => [() => `Hacknet Manager: ${nodeCount}/${args['limit']}`]);
+		const logger = new Logger(ns, [() => `Hacknet Manager: ${nodeCount}/${args['limit']}`]);
 		while(true) {
 			const balance = ns.getServerMoneyAvailable('home');
 
