@@ -132,6 +132,7 @@ export async function main(ns) {
 		'lib/logger.js',
 		'lib/utils.js',
 		'connect.js',
+		'copy.js',
         'crawler.js',
 		'hacknet-manager.js',
         'miner.js',
