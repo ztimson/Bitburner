@@ -24,7 +24,10 @@ export async function copyWithDependencies(ns, src, device) {
 
 /**
  * Display a progress bar in the terminal which updates in real time.
- * **Example:** `/script/test.js          [||||||||||----------]  50% (24.2 MB/s)`
+ *
+ * **Example:**
+ *
+ * `/script/test.js          [||||||||||----------]  50% (24.2 MB/s)`
  *
  * @param ns {NS} - BitBurner API
  * @param name {string} - Name to display at the begging of bar
@@ -53,17 +56,6 @@ export async function progressBar(ns, name, showSpeed = true, time = Math.random
 		updateLine.innerText = `${script}: ${text(p / 100, showSpeed ? p == 0 ? 0 : speed : null)}`;
 	}
 	return;
-}
-
-/**
- * Print a download bar to the terminal.
- * @param ns {NS} - BitBurner API
- * @param file - Filename to display with progress bar
- */
-export async function downloadPrint(ns, file) {
-	const speed = ~~(Math.random() * 100) / 10;
-	const spacing = Array((40 - file.length) || 1).fill(' ').join('');
-	await slowPrint(ns, `${file}${spacing}[==================>] 100%\t(${speed} MB/s)`);
 }
 
 /**
