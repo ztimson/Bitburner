@@ -23,17 +23,15 @@ export async function copyWithDependencies(ns, src, device) {
 }
 
 /**
- * Display a percentage bar in the terminal which updates in real time.
- *
- * **Example:**
- *
- * `/script/test.js [||||||||||----------] 50% (24.2 MB/s)`
+ * Display a progress bar in the terminal which updates in real time.
+ * **Example:** `/script/test.js          [||||||||||----------]  50% (24.2 MB/s)`
  *
  * @param ns {NS} - BitBurner API
  * @param name {string} - Name to display at the begging of bar
+ * @param showSpeed {boolean} - Show the speed in the progress bar
  * @param time {number} - Time it takes for bar to fill
  */
-export async function percentageBar(ns, name, time = 1) {
+export async function progressBar(ns, name, showSpeed = true, time = Math.random() + 0.5) {
 	const text = (percentage, speed) => {
 		const p = percentage > 1 ? 1 : percentage < 0 ? 0 : percentage;
 		const spacer = Array(30 - name.length).fill(' ').join('');
@@ -52,7 +50,7 @@ export async function percentageBar(ns, name, time = 1) {
 	for(let p = 0; p <= 100; p++) {
 		await ns.sleep((time * 1000) / 100);
 		if(p % 5 == 0) speed = Math.round((speed + (Math.random() > 0.5 ? 1 : -1) * Math.random()) * 10) / 10;
-		updateLine.innerText = `${script}: ${text(p / 100, p == 0 ? 0 : speed)}`;
+		updateLine.innerText = `${script}: ${text(p / 100, showSpeed ? p == 0 ? 0 : speed : null)}`;
 	}
 	return;
 }

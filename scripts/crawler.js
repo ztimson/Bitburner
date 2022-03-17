@@ -24,7 +24,7 @@ export async function main(ns) {
 		{name: 'depth', desc: 'Depth to scan to, defaults to 3', flags: ['-d', '--depth'], default: Infinity, type: 'num'},
 		{name: 'level', desc: 'Exclude targets with higher hack level, defaults to current hack level', flags: ['-l', '--level'], default: ns.getHackingLevel(),  type: 'num'},
 		{name: 'ports', desc: 'Exclute targets with too many closed ports', flags: ['-p', '--ports'], default: Infinity, type: 'num'},
-		{name: 'silent', desc: 'Surpress program output', flags: ['-s', '--silent'], type: 'bool'}
+		{name: 'silent', desc: 'Suppress program output', flags: ['-s', '--silent'], type: 'bool'}
 	], true);
 
 	try {

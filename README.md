@@ -45,13 +45,13 @@ Learn more about the [availible scripts](#scripts) bellow or pass the `--help` f
 ### [connect.js](./scripts/connect.js)
 **RAM:** 1.85 GB
 
-Connect to a device on a different network.
+Search the network for a device and connect to it.
 ```
 [home ~/]> run /scripts/connect.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/connect.js: 
 
-Connect to a device on a different network.
+Search the network for a device and connect to it.
 
 Usage:	run connect.js DEVICE
 	run connect.js --help
@@ -86,15 +86,15 @@ Options:
 ```
 
 ### [crawler.js](./scripts/crawler.js)
-**RAM:** 4.05 GB
+**RAM:** 4.10 GB
 
-Search the network for targets to execute a script against.
+Search the network for devices to execute a script against.
 ```
 [home ~/]> run scripts/crawler.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/crawler.js: 
 
-Search the network for targets to execute a script against.
+Search the network for devices to execute a script against.
 
 Usage:	run crawler.js [OPTIONS] SCRIPT [ARGS]...
 	run crawler.js --help
@@ -107,6 +107,7 @@ Options:
 	-d --depth		 Depth to scan to, defaults to 3
 	-l --level		 Exclude targets with higher hack level, defaults to current hack level
 	-p --ports		 Exclute targets with too many closed ports
+	-s --silent		 Surpress program output
 	-h --help		 Display this help message
 ```
 
@@ -128,19 +129,20 @@ Usage:	run hacknet-manager.js [OPTIONS] [LIMIT]
 
 Options:
 	-b --balance		 Prevent spending bellow point
+	-s --sleep		 Amount of time to wait between purchases, defaults to 1 (second)
 	-h --help		 Display this help message
 ```
 
 ### [miner.js](./scripts/miner.js)
 **RAM:** 2.45 GB
 
-Weaken, Grow, Hack loop to "mine" machine for money.
+Weaken, Grow, Hack loop to "mine" device for money. Tail for live updates.
 ```
 [home ~/]> run scripts/miner.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/miner.js: 
 
-Weaken, Grow, Hack loop to "mine" machine for money.
+Weaken, Grow, Hack loop to "mine" device for money. Tail for live updates.
 
 Usage:	run miner.js [DEVICE]
 	run miner.js --help
@@ -205,6 +207,7 @@ Usage:	run rootkit.js [OPTIONS] [DEVICE] [SCRIPT] [ARGS]...
 
 Options:
 	-c --cpu		 Number of CPU threads to use with script
+	-s --silent		 Surpress program output
 	-h --help		 Display this help message
 ```
 

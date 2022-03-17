@@ -1,5 +1,5 @@
 import {ArgError, ArgParser} from '/scripts/lib/arg-parser';
-import {copyWithDependencies, percentageBar} from '/scripts/lib/utils';
+import {copyWithDependencies, progressBar} from '/scripts/lib/utils';
 
 /**
  * BitBurner autocomplete
@@ -18,7 +18,7 @@ export async function main(ns) {
         {name: 'file', desc: 'File to copy', type: 'string'},
         {name: 'device', desc: 'Device to copy file(s) to', type: 'string'},
         {name: 'noDeps', desc: 'Skip copying dependencies', flags: ['-d', '--no-deps'], type: 'bool'},
-        {name: 'silent', desc: 'Surpress program output', flags: ['-s', '--silent'], type: 'bool'}
+        {name: 'silent', desc: 'Suppress program output', flags: ['-s', '--silent'], type: 'bool'}
     ], true);
 
     try {
@@ -38,12 +38,12 @@ export async function main(ns) {
         // Copy files & create download bar
         if(args['noDeps']) {
             await ns.scp(args['file'], args['device']);
-            if(!args['silent']) await percentageBar(ns, args['file']);
+            if(!args['silent']) await progressBar(ns, args['file']);
         } else {
             const files = await copyWithDependencies(ns, args['file'], args['device']);
             if(!args['silent']) {
                 for(let file of files) {
-                    await percentageBar(ns, file, 1);
+                    await progressBar(ns, file);
                 }
             }
         }

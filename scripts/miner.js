@@ -17,7 +17,7 @@ export function autocomplete(data) {
 export async function main(ns) {
 	// Setup
 	ns.disableLog('ALL');
-	const argParser = new ArgParser('miner.js', 'Weaken, Grow, Hack loop to "mine" machine for money. Tail for live updates', null, [
+	const argParser = new ArgParser('miner.js', 'Weaken, Grow, Hack loop to "mine" device for money. Tail for live updates.', null, [
 		{name: 'device', desc: 'Device to mine, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'}
 	]);
 
