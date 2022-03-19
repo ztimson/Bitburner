@@ -5,10 +5,12 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
 - [BitBurner - Scripts](#bitburner-scripts)
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
-  - [Scripts](#scripts)
+- [Scripts](#scripts)
+    - [botnet-manager.js (WIP)](#botnetmanagerjswip)
     - [connect.js](#connectjs)
     - [copy.js](#copyjs)
     - [crawler.js](#crawlerjs)
+    - [find-target.js](#besttargetjs)
     - [hacknet-manager.js](#hacknet-managerjs)
     - [miner.js](#minerjs)
     - [network-graph.js](#network-graphjs)
@@ -41,6 +43,14 @@ backdoor
 Learn more about the [availible scripts](#scripts) bellow or pass the `--help` flag to any of the included scripts in-game.
 
 ## Scripts
+
+### [botnet-manager.js (WIP)](./scripts/botnet-manager.js)
+**RAM:**  GB
+
+Connect & manage a network of devices to launch distributed attacks.
+```
+
+```
 
 ### [connect.js](./scripts/connect.js)
 **RAM:** 1.85 GB
@@ -108,6 +118,28 @@ Options:
 	-l --level		 Exclude targets with higher hack level, defaults to current hack level
 	-p --ports		 Exclute targets with too many closed ports
 	-s --silent		 Surpress program output
+	-h --help		 Display this help message
+```
+
+### [find-target.js](./scripts/find-target.js)
+**RAM:** 6.00 GB
+
+Scan the network for the best device(s) to mine.
+```
+[home ~/]> run scripts/find-target.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/find-target.js: 
+
+Scan the network for the best device(s) to mine.
+
+Usage:	run find-target.js [OPTIONS] 
+	run find-target.js --help
+
+Options:
+	-c --count		 Number of devices to return in order from best to worst
+	-r --rooted		 Filter to devices that have been rooted
+	-n --not-rooted		 Filter to devices that have not been rooted
+	-v --verbose		 Display the estimated income per minute per core
 	-h --help		 Display this help message
 ```
 

@@ -1,4 +1,21 @@
 /**
+ * Scan the entire network for the best device to hack.
+ * @param ns {NS} - BitBurner API
+ * @returns {string[]} - Sorted list of targets to hack based on financial return
+ */
+export function bestTarget(ns) {
+	const [devices, network] = scanNetwork(ns, 'home');
+	return devices.map(d => ns.getServer(d)).filter(d => d.hasAdminRights).map(d => ({
+		...d,
+		moneyAMinute: (ns.hackAnalyze(d.hostname) * ns.getServerMaxMoney(d.hostname)) * ((60 / (ns.getHackTime(d.hostname) / 1000)) * ns.hackAnalyzeChance(d.hostname))}
+	)).sort((a, b) => {
+		if(a.moneyAMinute < b.moneyAMinute) return 1;
+		if(a.moneyAMinute > b.moneyAMinute) return -1;
+		return 0;
+	});
+}
+
+/**
  * Copy a file & scan it for dependencies copying them as well.
  * @param ns {NS} - BitBurner API
  * @param src {string} - File to scan & copy

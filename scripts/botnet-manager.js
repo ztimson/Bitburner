@@ -6,7 +6,7 @@ class Manager {
     running;
     workers = [];
 
-    constructor(ns, device, port, config = '/conf/swarm.txt') {
+    constructor(ns, device, port, config = '/conf/botnet.txt') {
         this.ns = ns;
         this.config = config;
         this.device = device;
@@ -108,7 +108,7 @@ class Manager {
 export async function main(ns) {
     // Setup
     ns.disableLog('ALL');
-    const argParser = new ArgParser('swarm.js', 'Manage a swarm of devices.', [
+    const argParser = new ArgParser('botnet-manager.js', 'Connect & manage a network of devices to launch distributed attacks.', [
         'COPY [--HELP] [OPTIONS] FILE [DEST]',
         'JOIN [--HELP] MANAGER [DEVICE]',
         'KILL [--HELP]',
