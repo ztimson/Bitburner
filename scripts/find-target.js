@@ -22,7 +22,7 @@ export function main(ns) {
 
         // Banner
         ns.tprint('===================================================');
-        ns.tprint(`Finding Targets`);
+        ns.tprint(`Finding Targets:`);
         ns.tprint('===================================================');
 
         // Search & display results
