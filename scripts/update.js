@@ -119,15 +119,15 @@ export async function progressBar(ns, name, showSpeed = true, time = Math.random
 	let speed = Math.round((20 + Math.random() * 10) * 10) / 10;
 	ns.tprint(text(1, speed)); // Display the complete bar (This is the one that will be shown on redraws)
 	await ns.sleep(25); // Wait for the new line to display
-	const terminalOutput = eval('document').querySelectorAll('[class*="jss"].MuiTypography-body1');
+	const terminalOutput = eval('document').querySelectorAll('#terminal li p');
 	const updateLine = terminalOutput[terminalOutput.length - 1];
+	if(!updateLine) return await ns.sleep(time * 1000);
 	const script = updateLine.innerText.split(': ')[0];
 	for(let p = 0; p <= 100; p++) {
 		await ns.sleep((time * 1000) / 100);
 		if(p % 5 == 0) speed = Math.round((speed + (Math.random() > 0.5 ? 1 : -1) * Math.random()) * 10) / 10;
 		updateLine.innerText = `${script}: ${text(p / 100, showSpeed ? p == 0 ? 0 : speed : null)}`;
 	}
-	return;
 }
 
 /**
