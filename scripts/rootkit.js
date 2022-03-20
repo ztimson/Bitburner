@@ -36,44 +36,39 @@ export async function main(ns) {
 			ns.tprint('===================================================');
 		}
 
-		let spacer = false;
-		const sleep = 750;
-		try {
-			// Run exploits
-			ns.brutessh(args['device']);
-			if(!args['silent']) {
-				await slowPrint(ns, `Attacking over SSH (${args['device']}:22)...`, 0.5, 1.5);
-				await ns.sleep(sleep);
-				spacer = true;
-			}
-			ns.ftpcrack(args['device']);
-			if(!args['silent']) {
-				await slowPrint(ns, `Attacking over FTP (${args['device']}:24)...`, 0.5, 1.5);
-				await ns.sleep(sleep);
-			}
-			ns.relaysmtp(args['device']);
-			if(!args['silent']) {
-				await slowPrint(ns, `Attacking over SMTP (${args['device']}:25)...`, 0.5, 1.5);
-				await ns.sleep(sleep);
-			}
-		} catch {
-		} finally {
+		// Check if we already have root
+		if(ns.hasRootAccess(args['device'])) {
+			if(!args['silent']) ns.tprint('Root: Skipped');
+		} else {
+			let spacer = false;
 			try {
-				// Attempt root
-				if(spacer) ns.tprint('');
-				ns.nuke(args['device'])
+				// Run exploits
+				ns.brutessh(args['device']);
 				if(!args['silent']) {
-					ns.tprint(`Root: Success!`);
-					ns.tprint('');
+					await slowPrint(ns, `Attacking over SSH (${args['device']}:22)...`, 0.5, 1.5);
+					spacer = true;
 				}
+				ns.ftpcrack(args['device']);
+				if(!args['silent']) await slowPrint(ns, `Attacking over FTP (${args['device']}:24)...`, 0.5, 1.5);
+				ns.relaysmtp(args['device']);
+				if(!args['silent']) await slowPrint(ns, `Attacking over SMTP (${args['device']}:25)...`, 0.5, 1.5);
 			} catch {
-				if(!args['silent']) {
-					ns.tprint(`Root: Failed`);
-					ns.tprint('');
+			} finally {
+				try {
+					// Attempt root
+					if(spacer) ns.tprint('');
+					ns.nuke(args['device']);
+					if(!args['silent']) ns.tprint(`Root: Success!`);
+				} catch {
+					if(!args['silent']) {
+						ns.tprint(`Root: Failed`);
+						ns.tprint('');
+					}
+					ns.exit();
 				}
-				ns.exit();
 			}
 		}
+		ns.tprint('');
 
 		if(args['script']) {
 			// Detect script dependencies & copy everything to target

@@ -218,7 +218,7 @@ Options:
 ```
 
 ### [rootkit.js](./scripts/rootkit.js)
-**RAM:** 4.75 GB - 4.90 GB <small>(depending on un-commented programs)</small>
+**RAM:** 4.80 GB - 4.95 GB <small>(depending on un-commented programs)</small>
 
 Automatically gain root on a target machine. A file can also be uploaded & executed.
 
