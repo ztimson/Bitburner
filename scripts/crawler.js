@@ -23,7 +23,9 @@ export async function main(ns) {
 		{name: 'cpu', desc: 'Number of CPU threads to use with script', flags: ['-c', '--cpu'], default: 1, type: 'num'},
 		{name: 'depth', desc: 'Depth to scan to, defaults to 3', flags: ['-d', '--depth'], default: Infinity, type: 'num'},
 		{name: 'level', desc: 'Exclude targets with higher hack level, defaults to current hack level', flags: ['-l', '--level'], default: ns.getHackingLevel(),  type: 'num'},
-		{name: 'ports', desc: 'Exclute targets with too many closed ports', flags: ['-p', '--ports'], default: Infinity, type: 'num'},
+		{name: 'rooted', desc: 'Filter to devices that have been rooted', flags: ['-r', '--rooted'], type: 'bool'},
+		{name: 'notRooted', desc: 'Filter to devices that have not been rooted', flags: ['-n', '--not-rooted'], type: 'bool'},
+		{name: 'ports', desc: 'Exclude targets with too many closed ports', flags: ['-p', '--ports'], default: Infinity, type: 'num'},
 		{name: 'silent', desc: 'Suppress program output', flags: ['-s', '--silent'], type: 'bool'}
 	], true);
 
@@ -33,6 +35,11 @@ export async function main(ns) {
 		const [devices, network] = scanNetwork(ns);
 		let complete = 0, failed = 0, skipped = 0;
 		for(let device of devices) {
+			// Check root status if needed
+			const rooted = ns.hasRootAccess(device);
+			if(args['rooted'] && !rooted) continue;
+			if(args['notRooted'] && rooted) continue;
+
 			// Skip invalid devices
 			if(device == 'home' || args['level'] < ns.getServerRequiredHackingLevel(device) || args['ports'] < ns.getServerNumPortsRequired(device)) {
 				skipped++;
@@ -56,7 +63,7 @@ export async function main(ns) {
 		// Output report
 		if(!args['silent']) {
 			ns.tprint('===================================================');
-			ns.tprint(`Crawler Report: ${devices.length} Device${devices.length > 1 ? 's' : ''}`);
+			ns.tprint(`Crawler Report: ${complete + failed + skipped} Devices`);
 			ns.tprint('===================================================');
 			ns.tprint(`Complete: ${complete}\tFailed: ${failed}\tSkipped: ${skipped}`);
 			ns.tprint('');

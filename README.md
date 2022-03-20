@@ -96,7 +96,7 @@ Options:
 ```
 
 ### [crawler.js](./scripts/crawler.js)
-**RAM:** 4.10 GB
+**RAM:** 4.15 GB
 
 Search the network for devices to execute a script against.
 ```
@@ -104,7 +104,7 @@ Search the network for devices to execute a script against.
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/crawler.js: 
 
-Search the network for devices to execute a script against.
+Search the network for targets to execute a script against.
 
 Usage:	run crawler.js [OPTIONS] SCRIPT [ARGS]...
 	run crawler.js --help
@@ -116,8 +116,10 @@ Options:
 	-c --cpu		 Number of CPU threads to use with script
 	-d --depth		 Depth to scan to, defaults to 3
 	-l --level		 Exclude targets with higher hack level, defaults to current hack level
-	-p --ports		 Exclute targets with too many closed ports
-	-s --silent		 Surpress program output
+	-r --rooted		 Filter to devices that have been rooted
+	-n --not-rooted		 Filter to devices that have not been rooted
+	-p --ports		 Exclude targets with too many closed ports
+	-s --silent		 Suppress program output
 	-h --help		 Display this help message
 ```
 
