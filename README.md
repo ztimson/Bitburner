@@ -6,11 +6,11 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
 - [Scripts](#scripts)
-    - [botnet-manager.js (WIP)](#botnetmanagerjswip)
+    - [botnet-manager.js (WIP)](#botnet-managerjs-wip)
     - [connect.js](#connectjs)
     - [copy.js](#copyjs)
     - [crawler.js](#crawlerjs)
-    - [find-target.js](#findtargetjs)
+    - [find-target.js](#find-targetjs)
     - [hacknet-manager.js](#hacknet-managerjs)
     - [miner.js](#minerjs)
     - [network-graph.js](#network-graphjs)
@@ -26,13 +26,13 @@ run scripts/update.js # Repeat to pull the latest
 
 # View the network
 run scripts/network-graph.js --verbose
-run scripts/netowkr-graph.js --verbose --filter CSEC # Find path to a specific device
+run scripts/netowkr-graph.js -v --filter CSEC # Find path to a specific device
 
 # Start the node manager & cap it at 8 nodes
 run scripts/node-manager.js 8
 
 # Chain the crawler & rootkit to root all devices on the network
-run scripts/crawler.js --not-rooted --local /scripts/rootkit.js {{TARGET}}
+run scripts/crawler.js --not-rooted /scripts/rootkit.js {{TARGET}}
 
 # Find the most profitable server & use the crawler to deploy miners on the network targeting it
 run scripts/find-target.js # Output: n00dles
@@ -49,10 +49,13 @@ Learn more about the [availible scripts](#scripts) bellow or pass the `--help` f
 ## Scripts
 
 ### [botnet-manager.js (WIP)](./scripts/botnet-manager.js)
-**RAM:**  GB
+**RAM:** ?.?? GB
 
 Connect & manage a network of devices to launch distributed attacks.
 ```
+[home ~/]> run /scripts/botnet-manager.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/botnet-manager.js:
 
 ```
 
