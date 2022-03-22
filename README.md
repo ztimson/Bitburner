@@ -10,7 +10,7 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
     - [connect.js](#connectjs)
     - [copy.js](#copyjs)
     - [crawler.js](#crawlerjs)
-    - [find-target.js](#besttargetjs)
+    - [find-target.js](#findtargetjs)
     - [hacknet-manager.js](#hacknet-managerjs)
     - [miner.js](#minerjs)
     - [network-graph.js](#network-graphjs)
@@ -20,21 +20,25 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
 ## Quick Start
 
 ```bash
-# Download the update script in-game
+# Download the update script in-game & run it
 wget https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/update.js scripts/update.js
+run scripts/update.js # Repeat to pull the latest
 
-# Run the update script (Repeat this to pull this repository in the future)
-run scripts/update.js
+# View the network
+run scripts/network-graph.js --verbose
+run scripts/netowkr-graph.js --verbose --filter CSEC # Find path to a specific device
 
-# Start the node manager with 8 nodes
+# Start the node manager & cap it at 8 nodes
 run scripts/node-manager.js 8
 
-# Chain the crawler, rootkit & miner to hack everything on the network
-alias hackAll="run scripts/crawler.js /scripts/rootkit.js {{TARGET}} /scripts/miner.js"
-hackAll
+# Chain the crawler & rootkit to root all devices on the network
+run scripts/crawler.js --not-rooted --local /scripts/rootkit.js {{TARGET}}
 
-# Identify & install a backdoor on CSEC
-run scripts/network-graph.js -f CSEC
+# Find the most profitable server & use the crawler to deploy miners on the network targeting it
+run scripts/find-target.js # Output: n00dles
+run scriipts/crawler.js --rooted /scripts/miner.js n00dles
+
+# Install backdoor on CSEC
 run scripts/rootkit.js CSEC
 run scripts/connect.js CSEC
 backdoor
@@ -115,11 +119,14 @@ Usage:	run crawler.js [OPTIONS] SCRIPT [ARGS]...
 Options:
 	-c --cpu		 Number of CPU threads to use with script
 	-d --depth		 Depth to scan to, defaults to 3
-	-l --level		 Exclude targets with higher hack level, defaults to current hack level
+	-k --kill		 Kill all scripts running on device
+	--level			 Exclude targets with higher hack level, defaults to current hack level
+	-l --local		 Execute on current machine otherwise execute on remote device
 	-r --rooted		 Filter to devices that have been rooted
 	-n --not-rooted		 Filter to devices that have not been rooted
 	-p --ports		 Exclude targets with too many closed ports
 	-s --silent		 Suppress program output
+	-v --verbose		 Display the device names in the final report
 	-h --help		 Display this help message
 ```
 
@@ -210,7 +217,7 @@ Usage:	run network-graph.js [OPTIONS] [DEVICE]
 	DEVICE			 Point to start scan from, defaults to current machine
 
 Options:
-	-d --depth		 Depth to scan to, defaults is 3
+	-d --depth		 Depth to scan to
 	-f --filter		 Filter to device matching name
 	-e --regex		 Filter to devices matching pattern
 	-r --rooted		 Filter to devices that have been rooted
