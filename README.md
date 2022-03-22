@@ -123,8 +123,8 @@ Options:
 	-c --cpu		 Number of CPU threads to use with script
 	-d --depth		 Depth to scan to, defaults to 3
 	-k --kill		 Kill all scripts running on device
-	--level			 Exclude targets with higher hack level, defaults to current hack level
-	-l --local		 Execute on current machine otherwise execute on remote device
+	-l --level			 Exclude targets with higher hack level, defaults to current hack level
+	-e --remote-exec Copy script to remote device & run there
 	-r --rooted		 Filter to devices that have been rooted
 	-n --not-rooted		 Filter to devices that have not been rooted
 	-p --ports		 Exclude targets with too many closed ports
