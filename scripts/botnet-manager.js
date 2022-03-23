@@ -1,4 +1,4 @@
-import {ArgError, ArgParser} from '/scripts/lib/arg-parser';
+import {ArgError, ArgParser} from '/scripts/lib/arg-parser2';
 import {Logger} from '/scripts/lib/logger';
 import {copyWithDependencies} from '/scripts/lib/utils';
 
@@ -108,79 +108,80 @@ class Manager {
 export async function main(ns) {
     // Setup
     ns.disableLog('ALL');
+    const hostname = ns.getHostname(), portNum = 1;
     const argParser = new ArgParser('botnet-manager.js', 'Connect & manage a network of devices to launch distributed attacks.', [
-        'COPY [--HELP] [OPTIONS] FILE [DEST]',
-        'JOIN [--HELP] MANAGER [DEVICE]',
-        'KILL [--HELP]',
-        'LEAVE [--HELP]',
-        'MINE [--HELP] [OPTIONS] DEVICE',
-        'RUN [--HELP] [OPTIONS] SCRIPT [ARGS]...',
-        'START [--HELP] [OPTIONS]'
-    ], [
-        new ArgParser('copy', 'Copy file & dependencies to swarm nodes', null, [
-            {name: 'file', desc: 'File to copy', type: 'bool'},
-            {name: 'dest', desc: 'File destination on nodes', optional: true, type: 'bool'},
-            {name: 'manager', desc: 'Copy to manager node', flags: ['-m', '--manager'], type: 'bool'},
-            {name: 'noDeps', desc: 'Skip copying dependencies', flags: ['-d', '--no-deps'], type: 'bool'},
-            {name: 'workers', desc: 'Copy to worker nodes', flags: ['-w', '--workers'], type: 'bool'},
+        new ArgParser('copy', 'Copy file & dependencies to swarm nodes', [
+            {name: 'file', desc: 'File to copy', default: false},
+            {name: 'manager', desc: 'Copy to manager node', flags: ['-m', '--manager'], default: false},
+            {name: 'noDeps', desc: 'Skip copying dependencies', flags: ['-d', '--no-deps'], default: false},
+            {name: 'workers', desc: 'Copy to worker nodes', flags: ['-w', '--workers'], default: false},
         ]),
-        new ArgParser('join', 'Connect device as a worker node to the swarm', null, [
-            {name: 'device', desc: 'Device to connect, defaults to the current machine', optional: true, default: ns.getHostname(), type: 'string'}
+        new ArgParser('join', 'Connect device as a worker node to the swarm', [
+            {name: 'device', desc: 'Device to connect, defaults to the current machine', optional: true, default: hostname}
         ]),
         new ArgParser('kill', 'Kill any scripts running on worker nodes'),
-        new ArgParser('leave', 'Disconnect worker node from swarm', null, [
-            {name: 'device', desc: 'Device to disconnect, defaults to the current machine', optional: true, default: ns.getHostname(), type: 'string'}
+        new ArgParser('leave', 'Disconnect worker node from swarm', [
+            {name: 'device', desc: 'Device to disconnect, defaults to the current machine', optional: true, default: hostname}
         ]),
-        new ArgParser('run', 'Copy & run script on all worker nodes', null, [
+        new ArgParser('run', 'Copy & run script on all worker nodes', [
             {name: 'script', desc: 'Script to copy & execute', type: 'string'},
-            {name: 'args', desc: 'Arguments for script. Forward the current target with: {{TARGET}}', optional: true, extras: true, type: 'string'},
+            {name: 'args', desc: 'Arguments for script. Forward the current target with: {{TARGET}}', optional: true, extras: true},
         ]),
-        new ArgParser('start', 'Start this device as the swarm manager')
+        new ArgParser('start', 'Start this device as the swarm manager'),
+        {name: 'silent', desc: 'Suppress program output', flags: ['-s', '--silent'], default: false},
     ]);
+    const args = argParser.parse(ns.args);
 
-    try {
-        // Run
-        const portNum = 1;
-        const args = argParser.parse(ns.args);
-        if(args['command'].toLowerCase() == 'start') { // Start swarm manager
-            ns.tprint(`Starting swarm manager: ${args['remote']}`);
-            ns.tprint(`Connect a worker with: run swarm.js --join ${args['remote']}`);
-            await new Manager(ns, ns.getHostname(), portNum).start();
-        } else { // Send a command to the swarm
-            if(args['command'] == 'copy') {
-                await this.ns.writePort(portNum, JSON.stringify({
-                    manager: args['remote'],
-                    command: 'copy',
-                    value: args['file']
-                }));
-            } else if(args['command'] == 'join') {
-                await this.ns.writePort(portNum, JSON.stringify({
-                    manager: args['remote'],
-                    command: 'join',
-                    value: args['device']
-                }));
-            } else if(args['command'] == 'kill') {
-                await this.ns.writePort(portNum, JSON.stringify({
-                    manager: args['remote'],
-                    command: 'kill'
-                }));
-            } else if(args['command'] == 'leave') {
-                await this.ns.writePort(portNum, JSON.stringify({
-                    manager: args['remote'],
-                    command: 'leave',
-                    value: args['device']
-                }));
-            } else if(args['command'] == 'run') {
-                await this.ns.writePort(portNum, JSON.stringify({
-                    manager: args['remote'],
-                    command: 'run',
-                    value: args['script'],
-                    args: args['args']
-                }));
-            }
-        }
-    } catch(err) {
-        if(err instanceof ArgError) return ns.tprint(parser.help(err.message));
-        throw err;
+    // Help
+    if(args['help'] || args['_error'])
+        ns.tprint(argParser.help(args['help'] ? null : args['_error'], args['_command']));
+
+    // Run
+    if(args['_command'] == 'start') { // Start botnet manager
+        if(args['start']['help'] || args['start']['_error'])
+            ns.tprint(argParser.help(args['start']['help'] ? null : args['start']['_error'], 'start'));
+        ns.tprint(`Starting swarm manager: ${args['remote']}`);
+        ns.tprint(`Connect a worker with: run swarm.js --join ${args['remote']}`);
+        await new Manager(ns, hostname, portNum).start();
+    } else if(args['_command'] == 'copy') { // Issue copy command
+        if(args['copy']['help'] || args['copy']['_error'])
+            ns.tprint(argParser.help(args['copy']['help'] ? null : args['copy']['_error'], 'copy'));
+        await this.ns.writePort(portNum, JSON.stringify({
+            manager: args['copy']['remote'],
+            command: 'copy',
+            value: args['copy']['file']
+        }));
+    } else if(args['_command'] == 'join') { // Issue join command
+        if(args['join']['help'] || args['join']['_error'])
+            ns.tprint(argParser.help(args['join']['help'] ? null : args['join']['_error'], 'join'));
+        await this.ns.writePort(portNum, JSON.stringify({
+            manager: args['join']['remote'],
+            command: 'join',
+            value: args['join']['device']
+        }));
+    } else if(args['_command'] == 'kill') { // Issue kill command
+        if(args['kill']['help'] || args['kill']['_error'])
+            ns.tprint(argParser.help(args['kill']['help'] ? null : args['kill']['_error'], 'kill'));
+        await this.ns.writePort(portNum, JSON.stringify({
+            manager: args['kill']['remote'],
+            command: 'kill'
+        }));
+    } else if(args['_command'] == 'leave') { // Issue leave command
+        if(args['leave']['help'] || args['leave']['_error'])
+            ns.tprint(argParser.help(args['leave']['help'] ? null : args['leave']['_error'], 'leave'));
+        await this.ns.writePort(portNum, JSON.stringify({
+            manager: args['leave']['remote'],
+            command: 'leave',
+            value: args['leave']['device']
+        }));
+    } else if(args['_command'] == 'run') { // Issue run command
+        if(args['run']['help'] || args['run']['_error'])
+            ns.tprint(argParser.help(args['run']['help'] ? null : args['run']['_error'], 'run'));
+        await this.ns.writePort(portNum, JSON.stringify({
+            manager: args['run']['remote'],
+            command: 'run',
+            value: args['run']['script'],
+            args: args['run']['args']
+        }));
     }
 }
