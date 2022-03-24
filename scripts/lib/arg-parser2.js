@@ -47,21 +47,32 @@ export class ArgParser {
                 // Find & add flag
                 const combined = arg.split('=');
                 const argDef = this.flags.find(flag => flag.flags.includes(combined[0] || arg));
-                if(!argDef) extras.push(arg); // Not found, add to extras
-                const value = argDef.default === false ? true : argDef.default === true ? false : queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
-                if(value == null) parsed['_error'] = `${argDef.name.toUpperCase()} missing value`
+                if(argDef == null) { // Not found, add to extras
+                    extras.push(arg);
+                    continue;
+                }
+                const value = argDef.default === false ? true : argDef.default === true ? false : argDef.default || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
+                if(value == null) parsed['_error'] = `Option missing value: ${arg.name}`;
                 parsed[argDef.name] = value;
             } else { // Command
                 const c = this.commands.find(command => command.name == arg);
                 if(!!c) {
-                    parsed['_command'] = c.name;
-                    parsed[c.name] = c.parse(queue.splice(0, queue.length));
+                    const parsedCommand = c.parse(queue.splice(0, queue.length));
+                    Object.keys(parsedCommand).forEach(key => {
+                        if(parsed[key] != parsedCommand[key] && parsedCommand[key] == c.defaults[key])
+                            delete parsedCommand[key];
+                    });
+                    parsed = {
+                        ...parsed,
+                        ...parsedCommand,
+                        _command: c.name
+                    };
                 } else extras.push(arg); // Not found, add to extras
             }
         }
         // Arguments
         this.args.filter(arg => !arg.extras).forEach(arg => {
-            if(!arg.optional && !extras.length) parsed['_error'] = `${arg.name.toUpperCase()} is missing`;
+            if(!arg.optional && !extras.length) parsed['_error'] = `Argument missing: ${arg.name.toUpperCase()}`;
             parsed[arg.name] = extras.splice(0, 1)[0];
         });
         // Extras

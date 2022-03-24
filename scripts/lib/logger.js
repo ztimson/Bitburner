@@ -12,7 +12,14 @@ export class Logger {
 		this.fns = lineFns;
 		this.historyLen -= lineFns.length * 2;
 		this.history = Array(this.historyLen).fill('');
+		this.log();
 	}
+
+	/**
+	 * Add red error message to logs
+	 * @param message {string} - Text that will be added
+	 */
+	error(message) { this.log(`ERROR: ${message}`); }
 
 	/**
 	 * Add a linebreak
@@ -33,13 +40,20 @@ export class Logger {
 	}
 
 	/**
-	 * Add message to logs & output
+	 * Add message to the logs
+	 * @param message {string} - Text that will be added
 	 */
-	log(message) {
+	log(message = '') {
 		this.ns.clearLog();
 		this.header();
-		if(message != null) this.history.push(message);
+		if(message) this.history.push(message);
 		this.history.splice(0, this.history.length - this.historyLen);
 		this.history.forEach(m => this.ns.print(m));
 	}
+
+	/**
+	 * Add orange warning to the logs
+	 * @param message {string} - Text that will be added
+	 */
+	warn(message) { this.log(`WARN: ${message}`); }
 }
