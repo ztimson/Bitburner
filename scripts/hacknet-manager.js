@@ -74,7 +74,7 @@ export async function main(ns) {
 				// Apply the cheapest upgrade
 				if(upgrades.length) {
 					if(args['autoLimit'] && nodeCount >= args['limit'] && upgrades[0].bestUpgrade.cost == Infinity) {
-						args['limit'] += 1;
+						args['limit'] = Math.max(nodeCount, args['limit']) + 1;
 						logger.log(`Increasing node limit to ${args['limit']}`);
 					} else if(balance - upgrades[0].bestUpgrade.cost >= args['balance']) {
 						const cost = Math.round(upgrades[0].bestUpgrade.cost * 100) / 100;
