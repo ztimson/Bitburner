@@ -7,6 +7,7 @@ class Manager {
     workers = [];
 
     constructor(ns, device, port, config = '/conf/botnet.txt') {
+        ns.disableLog('ALL');
         this.ns = ns;
         this.config = config;
         this.device = device;
@@ -154,7 +155,7 @@ export async function main(ns) {
     // Run command
     if(args['_command'] == 'start') { // Start botnet manager
         ns.tprint(`Starting swarm manager: ${hostname}`);
-        ns.tprint(`Connect a worker with: run botnet-manager.js --join ${hostname}`);
+        ns.tprint(`Connect a worker with: run botnet-manager.js join`);
         await new Manager(ns, hostname, portNum).start();
     } else if(args['_command'] == 'copy') { // Issue copy command
         await ns.writePort(portNum, JSON.stringify({
