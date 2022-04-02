@@ -8,7 +8,8 @@ export class ArgParser {
      * @param argList {(ArgParser || {name: string, desc: string, flags: string[], optional: boolean, default: boolean})[]} - Array of CLI arguments
      * @param examples {string[]} - Additional examples to display
      */
-    constructor(name, desc, argList = [], examples = []) {
+    constructor(ns, name, desc, argList = [], examples = []) {
+        this.ns = ns;
         this.name = name;
         this.desc = desc;
 
@@ -27,13 +28,12 @@ export class ArgParser {
             `--help ${this.commands.length ? '[COMMAND]' : ''}`
         ].filter(e => !!e);
     }
-
     /**
      * Parse an array into an arguments dictionary using the configuration.
      * @param args {string[]} - Array of arguments to be parsed
      * @returns {object} - Dictionary of arguments with defaults applied
      */
-    parse(args) {
+    parse(args = this.ns.args) {
         // Parse arguments
         let extras = [], parsed = {...this.defaults}, queue = [...args];
         while(queue.length) {
@@ -51,7 +51,7 @@ export class ArgParser {
                     extras.push(arg);
                     continue;
                 }
-                const value = argDef.default === false ? true : argDef.default === true ? false : argDef.default || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
+                const value = argDef.default === false ? true : argDef.default === true ? false : queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0] || argDef.default;
                 if(value == null) parsed['_error'] = `Option missing value: ${arg.name}`;
                 parsed[argDef.name] = value;
             } else { // Command
@@ -114,6 +114,6 @@ export class ArgParser {
         if(this.commands.length) msg += '\n\nCommands:\n\t' + this.commands
             .map(command => `${command.name}${spacer(command.name)}${command.desc}`)
             .join('\n\t');
-        return `${msg}\n\n`;
+        this.ns.tprint(`${msg}\n\n`);
     }
 }

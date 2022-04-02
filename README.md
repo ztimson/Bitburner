@@ -15,6 +15,7 @@ These scripts are for playing the [open source](https://github.com/danielyxie/bi
     - [miner.js](#minerjs)
     - [network-graph.js](#network-graphjs)
     - [rootkit.js](#rootkitjs)
+    - [server-manager.js](#server-managerjs)
     - [update.js](#updatejs)
 
 ## Quick Start
@@ -49,7 +50,7 @@ Learn more about the [availible scripts](#scripts) bellow or pass the `--help` f
 ## Scripts
 
 ### [botnet-manager.js (WIP)](./scripts/botnet-manager.js)
-**RAM:** ?.?? GB
+**RAM:** 7.15 GB
 
 Connect & manage a network of devices to launch distributed attacks.
 ```
@@ -57,6 +58,23 @@ Connect & manage a network of devices to launch distributed attacks.
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/botnet-manager.js:
 
+Connect & manage a network of devices to launch distributed attacks.
+
+Usage:	run botnet-manager.js [OPTIONS] 
+	run botnet-manager.js [OPTIONS] COMMAND
+	run botnet-manager.js --help [COMMAND]
+
+Options:
+	-s, --silent            Suppress program output
+	-h, --help              Display this help message
+
+Commands:
+	copy                    Copy file & dependencies to swarm nodes
+	join                    Connect device as a worker node to the swarm
+	kill                    Kill any scripts running on worker nodes
+	leave                   Disconnect worker node from swarm
+	run                     Copy & run script on all worker nodes
+	start                   Start this device as the swarm manager
 ```
 
 ### [connect.js](./scripts/connect.js)
@@ -230,11 +248,11 @@ Options:
 ```
 
 ### [rootkit.js](./scripts/rootkit.js)
-**RAM:** 4.80 GB - 4.95 GB <small>(depending on un-commented programs)</small>
-
-Automatically gain root on a target machine. A file can also be uploaded & executed.
+**RAM:** 5.05 GB <small>(Can be reduced to 4.80 GB)</small>
 
 Programs can be commented out to lower the cost of running.
+
+Automatically gain root on a target machine. A file can also be uploaded & executed.
 ```
 [home ~/]> run scripts/rootkit.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
@@ -253,6 +271,28 @@ Options:
 	-c --cpu		 Number of CPU threads to use with script
 	-s --silent		 Surpress program output
 	-h --help		 Display this help message
+```
+
+### [server-manager.js](./scripts/server-manager.js)
+**RAM:** 9.35 GB
+
+Automate the buying & upgrading of servers.
+```
+[home ~/]> run /scripts/server-manager.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/server-manager.js: 
+
+Automate the buying & upgrading of servers.
+
+Usage:	run server-manager.js [OPTIONS] 
+	run server-manager.js --help 
+
+Options:
+	-b, --balance           Prevent spending bellow point
+	-l, --limit             Limit the number of servers that can be purchased, defaults to 25
+	-r, --ram               Amount of RAM to purchase new servers with, defaults to 8 GB
+	-s, --sleep             Amount of time to wait between purchases, defaults to 1 (second)
+	-h, --help              Display this help message
 ```
 
 ### [update.js](./scripts/update.js)
