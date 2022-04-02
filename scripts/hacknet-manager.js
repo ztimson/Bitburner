@@ -10,6 +10,7 @@ export async function main(ns) {
 	ns.disableLog('ALL');
 	const argParser = new ArgParser('hacknet-manager.js', 'Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.', null, [
 		{name: 'limit', desc: 'Limit the number of nodes the manager will buy, defaults to 8', optional: true, default: 8, type: 'num'},
+		{name: 'autoLimit', desc: 'Automatically increase the node limit when there is nothing to do', flags: ['-a', '--auto-limit'], type: 'bool'},
 		{name: 'balance', desc: 'Prevent spending bellow point', flags: ['-b', '--balance'], type: 'num'},
 		{name: 'sleep', desc: 'Amount of time to wait between purchases, defaults to 1 (second)', flags: ['-s', '--sleep'], default: 1, type: 'num'}
 	]);
@@ -29,7 +30,7 @@ export async function main(ns) {
 				logger.log(`Buying Node ${nodeCount}`);
 			} else {
 				// Create an ordered list of nodes by their cheapest upgrade
-				const nodes = Array(nodeCount).fill(null)
+				const upgrades = Array(nodeCount).fill(null)
 					.map((ignore, i) => ({ // Gather information
 						index: i,
 						cacheCost: ns.hacknet.getCacheUpgradeCost(i),
@@ -71,10 +72,15 @@ export async function main(ns) {
 					});
 
 				// Apply the cheapest upgrade
-				if(nodes.length && balance - nodes[0].bestUpgrade.cost >= args['balance']) {
-					const cost = Math.round(nodes[0].bestUpgrade.cost * 100) / 100;
-					logger.log(`Node ${nodes[0].index} - ${nodes[0].bestUpgrade.name} ${nodes[0][nodes[0].bestUpgrade.name] + 1} - $${cost}`);
-					nodes[0].bestUpgrade.purchase();
+				if(upgrades.length) {
+					if(args['autoLimit'] && nodeCount >= args['limit'] && upgrades[0].bestUpgrade.cost == Infinity) {
+						args['limit'] += 1;
+						logger.log(`Increasing node limit to ${args['limit']}`);
+					} else if(balance - upgrades[0].bestUpgrade.cost >= args['balance']) {
+						const cost = Math.round(upgrades[0].bestUpgrade.cost * 100) / 100;
+						logger.log(`Node ${upgrades[0].index} - ${upgrades[0].bestUpgrade.name} ${upgrades[0][upgrades[0].bestUpgrade.name] + 1} - $${cost}`);
+						upgrades[0].bestUpgrade.purchase();
+					}
 				}
 			}
 

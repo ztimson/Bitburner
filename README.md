@@ -190,6 +190,7 @@ Usage:	run hacknet-manager.js [OPTIONS] [LIMIT]
 	LIMIT			 Limit the number of nodes the manager will buy, defaults to 8
 
 Options:
+	-a --auto-limit		 Automatically increase the node limit when there is nothing to do
 	-b --balance		 Prevent spending bellow point
 	-s --sleep		 Amount of time to wait between purchases, defaults to 1 (second)
 	-h --help		 Display this help message
