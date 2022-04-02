@@ -45,13 +45,17 @@ export async function main(ns) {
 				// Run exploits
 				ns.brutessh(args['device']);
 				if(!args['silent']) {
-					await slowPrint(ns, `Attacking over SSH (${args['device']}:22)...`, 0.5, 1.5);
+					await slowPrint(ns, `Checking SSH (:22)...`, 0.5, 1.5);
 					spacer = true;
 				}
 				ns.ftpcrack(args['device']);
-				if(!args['silent']) await slowPrint(ns, `Attacking over FTP (${args['device']}:24)...`, 0.5, 1.5);
+				if(!args['silent']) await slowPrint(ns, `Checking FTP (:24)...`, 0.5, 1.5);
 				ns.relaysmtp(args['device']);
-				if(!args['silent']) await slowPrint(ns, `Attacking over SMTP (${args['device']}:25)...`, 0.5, 1.5);
+				if(!args['silent']) await slowPrint(ns, `Checking SMTP (:25)...`, 0.5, 1.5);
+				ns.httpworm(args['device']);
+				if(!args['silent']) await slowPrint(ns, `Checking HTTP (:80)...`, 0.5, 1.5);
+				ns.sqlinject(args['device']);
+				if(!args['silent']) await slowPrint(ns, `Checking SQL (:3306)...`, 0.5, 1.5);
 			} catch {
 			} finally {
 				try {
