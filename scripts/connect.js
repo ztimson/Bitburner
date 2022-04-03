@@ -14,7 +14,7 @@ export function autocomplete(data) {
  * Search the network for a device and connect to it.
  * @param ns {NS} - BitBurner API
  */
-export function main(ns) {
+export async function main(ns) {
 	// Setup
 	ns.disableLog('ALL');
 	const argParser = new ArgParser('connect.js', 'Search the network for a device and connect to it.', null, [
@@ -26,11 +26,12 @@ export function main(ns) {
 		const args = argParser.parse(ns.args);
 		const [devices, network] = scanNetwork(ns);
 		pruneTree(network, d => d == args['device']);
-		let current = network, name;
+		let current = network, name, path = [];
 		while(name = Object.keys(current)[0]) {
-			terminal(`connect ${name}`);
 			current = current[name];
+			path.push(name);
 		}
+		await terminal('home; ' + path.map(p => `connect ${p}`).join('; '));
 	} catch(err) {
 		if(err instanceof ArgError) return ns.tprint(argParser.help(err.message));
 		throw err;

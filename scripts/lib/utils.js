@@ -125,14 +125,23 @@ export async function slowPrint(ns, message, min = 0.5, max = 1.5) {
 /**
  * Write a command to the terminal.
  * @param command {string} - Command that will be run
- * @returns {string} - Response
+ * @returns {Promise<string>} - Command line response
  */
-export async function terminal(command) {
-	// Get Terminal
-	const cli = eval('document').querySelector("#terminal-input"); // Terminal
-	const key = Object.keys(cli)[1];
+export function terminal(command) {
+	// Get the terminal
+	const terminalInput = document.getElementById("terminal-input");
+	const handler = Object.keys(terminalInput)[1];
 
 	// Send command
-	cli[key].onChange({ target: {value: command} });
-	cli[key].onKeyDown({ keyCode: 13, preventDefault: () => {} });
+	terminalInput.value = command; // Enter the command
+	terminalInput[handler].onChange({target:terminalInput}); // React on change
+	terminalInput[handler].onKeyDown({key: 'Enter', preventDefault: () => null}); // Enter 'keystroke'
+
+	// Return any new terminal output
+	return new Promise(res => setTimeout(() => {
+		const terminalOutput = Array.from(eval('document')
+			.querySelectorAll('#terminal li p')).map(out => out.innerText);
+		const i = terminalOutput.length - terminalOutput.reverse().findIndex(o => o.indexOf(command) != -1);
+		res(terminalOutput.reverse().slice(i));
+	}, 25));
 }
