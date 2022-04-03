@@ -17,7 +17,7 @@ export async function main(ns) {
     const argParser = new ArgParser('copy.js', 'Copy a file/script to a device along with any dependencies.', null, [
         {name: 'file', desc: 'File to copy', type: 'string'},
         {name: 'device', desc: 'Device to copy file(s) to', type: 'string'},
-        {name: 'noDeps', desc: 'Skip copying dependencies', flags: ['-d', '--no-deps'], type: 'bool'},
+        {name: 'noDeps', desc: 'Skip copying dependencies', flags: ['-n', '--no-deps'], type: 'bool'},
         {name: 'silent', desc: 'Suppress program output', flags: ['-s', '--silent'], type: 'bool'}
     ], true);
 
