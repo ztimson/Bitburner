@@ -1,42 +1,60 @@
 /**
- * Scan the entire network for the best device to hack.
- * @param ns {NS} - BitBurner API
- * @returns {string[]} - Sorted list of targets to hack based on financial return
+ * Add CSS to DOM.
+ *
+ * @param {string} id - An ID so we can make sure we only inject it once
+ * @param {string} css - CSS to inject
  */
-export function bestTarget(ns) {
-	const [devices, network] = scanNetwork(ns, 'home');
-	return devices.map(d => ns.getServer(d)).filter(d => d.hasAdminRights).map(d => ({
-		...d,
-		moneyAMinute: (ns.hackAnalyze(d.hostname) * ns.getServerMaxMoney(d.hostname)) * ((60 / (ns.getHackTime(d.hostname) / 1000)) * ns.hackAnalyzeChance(d.hostname))}
-	)).sort((a, b) => {
-		if(a.moneyAMinute < b.moneyAMinute) return 1;
-		if(a.moneyAMinute > b.moneyAMinute) return -1;
-		return 0;
+export function addCSS(id, css) {
+	const doc = eval('document');
+	id = `dynamic-css-${id}`;
+	const exists = doc.querySelector(`#${id}`);
+	if(exists) exists.outerHTML = '';
+	doc.head.insertAdjacentHTML('beforeend', `<style id="${id}">${css}</style`);
+}
+
+/**
+ * Format number to look like a dollar value ($1,000.00).
+ *
+ * @param {number} num - Number to format
+ * @returns {string} - formatted value with dollar sign
+ */
+export function toCurrency(num) {
+	return Number(num).toLocaleString('en-US', {
+		style: 'currency',
+		currency: 'USD',
 	});
 }
 
 /**
- * Copy a file & scan it for dependencies copying them as well.
- * @param ns {NS} - BitBurner API
- * @param src {string} - File to scan & copy
- * @param device {string} - Device to copy files to
- * @returns {string[]} - Array of coppied files
+ * Injects HTML into the terminal as a new line.
+ *
+ * **Disclaimer:** React will wipe out anything injected by this function.
+ *
+ * @param {string} html - HTML to inject into terminal
+ * @param {boolean} wrap - Wrap in a list-item & paragraph to match default style
  */
-export async function copyWithDependencies(ns, src, device) {
-	const queue = [src], found = [src];
-	while(queue.length) {
-		const file = queue.splice(0, 1)[0];
-		const imports = new RegExp(/from ["']\.?(\/.+)["']/g);
-		const script = await ns.read(file);
-		let match;
-		while((match = imports.exec(script)) != null) {
-			const path = `${match[1]}.js`;
-			queue.push(path);
-			found.push(path);
+export function htmlPrint(html, wrap = true) {
+	setTimeout(() => {
+		const doc = eval('document');
+		if(wrap) {
+			const liClass = doc.querySelector('#terminal li').classList.value;
+			const pClass = doc.querySelector('#terminal li p').classList.value;
+			html = `<li class="${liClass}"><p class="${pClass}">${html}</p></li>`
 		}
-	}
-	await ns.scp(found, device);
-	return found.reverse();
+		eval('document').getElementById('terminal').insertAdjacentHTML('beforeend', html)
+	}, 25);
+}
+
+/**
+ * Calculate the maximum number of threads a script can be executed with.
+ *
+ * @param {NS} ns - BitBurner API
+ * @param {string} script - Full path to script
+ * @param {string} server - Server script will run on
+ * @returns {number} - Number of threads the server will be able to support
+ */
+export function maxThreads(ns, script, server = ns.getHostname()) {
+	return ~~(ns.getServerMaxRam(server) / ns.getScriptRam(script, ns.getHostname()))
 }
 
 /**
@@ -46,10 +64,10 @@ export async function copyWithDependencies(ns, src, device) {
  *
  * `/script/test.js          [||||||||||----------]  50% (24.2 MB/s)`
  *
- * @param ns {NS} - BitBurner API
- * @param name {string} - Name to display at the begging of bar
- * @param showSpeed {boolean} - Show the speed in the progress bar
- * @param time {number} - Time it takes for bar to fill
+ * @param {NS} ns - BitBurner API
+ * @param {string} name - Name to display at the begging of bar
+ * @param {boolean} showSpeed - Show the speed in the progress bar
+ * @param {number} time - Time it takes for bar to fill
  */
 export async function progressBar(ns, name, showSpeed = true, time = Math.random() + 0.5) {
 	const text = (percentage, speed) => {
@@ -77,8 +95,9 @@ export async function progressBar(ns, name, showSpeed = true, time = Math.random
 
 /**
  * **Impure:** Prune tree down to keys which pass function
- * @param tree {object} - Tree to search
- * @param fn {(key: string) => boolean} - Function to test each key with
+ *
+ * @param {Object} tree - Tree to search
+ * @param {(key: string) => boolean} fn - Function to test each key with
  * @returns {boolean} - True if a match was found
  */
 export function pruneTree(tree, fn) {
@@ -91,56 +110,65 @@ export function pruneTree(tree, fn) {
 }
 
 /**
- * Scan the network of a given device.
- * @param ns {NS} - BitBurner API
- * @param device {string} - Device network that will be scanned
- * @param maxDepth - Depth to scan to
- * @returns {[string[], Object]} - A tuple including an array of discovered devices & a tree of the network
+ * Pause for a random amount of time.
+ * @param {number} min - minimum amount of time to wait after printing text
+ * @param {number} max - maximum amount of time to wait after printing text
  */
-export function scanNetwork(ns, device = ns.getHostname(), maxDepth = Infinity) {
-	let discovered = [device];
-	function scan (device, depth = 1) {
-		if(depth > maxDepth) return {};
-		const localTargets = ns.scan(device).filter(newDevice => !discovered.includes(newDevice));
-		discovered = [...discovered, ...localTargets];
-		return localTargets.reduce((acc, device) => ({...acc, [device]: scan(device, depth + 1)}), {});
-	}
-	const network = scan(device);
-	return [discovered.slice(1), network];
+export function randomSleep(min = 0.5, max = 1.5) {
+	return new Promise(res => setTimeout(res, ~~(Math.random() * (max * 1000 - min * 1000)) + min * 1000));
+}
+
+/**
+ * Converts function into HTML friendly string with it's arguments. Meant to be used
+ * with `onclick` to execute code.
+ *
+ * @param {Function} fn - function that will be serialized
+ * @param {...any} args - Arguments passed to function
+ * @returns {string} - Serialized function with arguments: "(function(arg1, arg2, ...) {...})(arg1, arg2, ...)"
+ */
+export function serializeFunction(fn, ...args) {
+	let serialized = fn.toString().replace(/function .+\W?\(/, 'function(');
+	serialized = `(${serialized})(${args.map(a => JSON.stringify(a)).join()})`;
+	serialized = serialized.replace(/"/g, '&quot;');
+	serialized = serialized.replace(/'/g, '&#39;');
+	return serialized;
 }
 
 /**
  * Print text to the terminal & then delay for a random amount of time to emulate execution time.
- * @param ns {NS} - BitBurner API
- * @param message {string} - Text to display
- * @param min {number} - minimum amount of time to wait after printing text
- * @param max {number} - maximum amount of time to wait after printing text
+ *
+ * @param {NS} ns - BitBurner API
+ * @param {string} message - Text to display
+ * @param {boolean} first - Pause first or wait until text is displayed
+ * @param {number} min - minimum amount of time to wait after printing text
+ * @param {number} max - maximum amount of time to wait after printing text
  */
-export async function slowPrint(ns, message, min = 0.5, max = 1.5) {
-	const time = ~~(Math.random() * (max * 1000 - min * 1000)) + min * 1000;
+export async function slowPrint(ns, message, first = false, min = 0.5, max = 0.5) {
+	if(first) await randomSleep(min, max);
 	ns.tprint(message);
-	await ns.sleep(time);
+	await randomSleep(min, max);
 }
 
 /**
  * Write a command to the terminal.
- * @param command {string} - Command that will be run
- * @returns {Promise<string>} - Command line response
+ *
+ * @param {string} command - Command that will be run
+ * @returns {Promise<string[]>} - Any new output
  */
 export function terminal(command) {
 	// Get the terminal
-	const terminalInput = document.getElementById("terminal-input");
+	const doc = eval('document');
+	const terminalInput = doc.getElementById("terminal-input");
 	const handler = Object.keys(terminalInput)[1];
 
 	// Send command
 	terminalInput.value = command; // Enter the command
-	terminalInput[handler].onChange({target:terminalInput}); // React on change
+	terminalInput[handler].onChange({target: terminalInput}); // React on change
 	terminalInput[handler].onKeyDown({key: 'Enter', preventDefault: () => null}); // Enter 'keystroke'
 
 	// Return any new terminal output
 	return new Promise(res => setTimeout(() => {
-		const terminalOutput = Array.from(eval('document')
-			.querySelectorAll('#terminal li p')).map(out => out.innerText);
+		const terminalOutput = Array.from(doc.querySelectorAll('#terminal li p')).map(out => out.innerText);
 		const i = terminalOutput.length - terminalOutput.reverse().findIndex(o => o.indexOf(command) != -1);
 		res(terminalOutput.reverse().slice(i));
 	}, 25));

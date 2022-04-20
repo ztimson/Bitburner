@@ -1,63 +1,115 @@
-import {ArgError, ArgParser} from '/scripts/lib/arg-parser';
-import {pruneTree, scanNetwork} from '/scripts/lib/utils';
+import {ArgParser} from '/scripts/lib/arg-parser';
+import {addCSS, htmlPrint, pruneTree, serializeFunction, terminal} from '/scripts/lib/utils';
+import {connectionString} from '/scripts/connect';
+import {scanNetwork} from '/scripts/crawler';
+
+const CSS = `
+	#terminal a:not([href]):hover {
+		cursor:pointer;
+		text-decoration:underline;
+	}
+	.srv-fnr { color: #BBBB11; }
+	.srv-fr {
+		color: #FFFF44;
+		font-weight: bold;
+	}
+	.srv-nr { color: #11BB11; }
+	.srv-r { 
+		color: #00FF00;
+		font-weight: bold;
+	}`
+
+export const factionServers = ['CSEC', 'avmnite-02h', 'I.I.I.I', 'run4theh111z', 'w0r1d_d43m0n'];
 
 /**
- * BitBurner autocomplete
- * @param data {server: string[], txts: string[], scripts: string[], flags: string[]} - Contextual information
+ * Scan the network for servers and display as an ASCII tree. Servers with root access are highlighted & bold.
+ *
+ * @param {NS} ns - BitBurner API
+ */
+export async function main(ns) {
+	// Setup
+	ns.disableLog('ALL');
+	const argParser = new ArgParser('network-graph.js', 'Scan the network for servers and display as an ASCII tree. Servers with root access are highlighted & bold. Click to automatically connect.', [
+		{name: 'server', desc: 'Point to start scan from, defaults to local server', optional: true, default: ns.getHostname()},
+		{name: 'depth', desc: 'Depth to scan to', flags: ['-d', '--depth'], default: Infinity},
+		{name: 'filter', desc: 'Filter to servers matching name', flags: ['-f', '--filter'], default: false},
+		{name: 'regex', desc: 'Filter to servers matching pattern', flags: ['-e', '--regex'], default: false},
+		{name: 'level', desc: 'Display the required hack level & number of ports to root: [level|port]', flags: ['-l', '--level'], default: false},
+		{name: 'notRooted', desc: 'Filter to servers that have not been rooted', flags: ['-n', '--not-rooted'], default: false},
+		{name: 'rooted', desc: 'Filter to servers that have been rooted', flags: ['-r', '--rooted'], default: false},
+		{name: 'specs', desc: 'Display the server specifications: {CPU|RAM}', flags: ['-s', '--specs'], default: false},
+		{name: 'usage', desc: 'Display the server utilization: (USG%)', flags: ['-u', '--usage'], default: false},
+		{name: 'verbose', desc: 'Display level, specs & usage in that order: [HL|P] {CPU|RAM} (USG%)', flags: ['-v', '--verbose'], default: false},
+	]);
+	const args = argParser.parse(ns.args);
+
+	/**
+	 * Get the color class for the server.
+	 *
+	 * @param {string} server - Server to figure out color for.
+	 */
+	function color(server) {
+		const rooted = ns.getServer(server).hasAdminRights; // Already using getServer so we might as well keep using it
+		if(factionServers.includes(server)) return rooted ? 'srv-fr' : 'srv-fnr';
+		return rooted ? 'srv-r' : 'srv-nr';
+	}
+
+	/**
+	 * Create serialized connection command.
+	 *
+	 * @param {string} server - server to connect to.
+	 */
+	function connectFn(server) {
+		return serializeFunction(terminal, connectionString(ns, server, 'home'));
+	}
+
+	/**
+	 * Iterate tree & convert to ascii.
+	 *
+	 * @param {Object} tree - Tree to parse
+	 * @param {string} spacer - Spacer text for tree formatting
+	 */
+	function render(tree, spacer = ' ') {
+		const nodes = Object.keys(tree);
+		for(let i = 0; i < nodes.length; i++) {
+			const server = nodes[i], info = ns.getServer(server);
+			let stats = '';
+			if(args['level'] || args['verbose']) stats += ` [${info.requiredHackingSkill}|${info.openPortCount}]`;
+			if(args['specs'] || args['verbose']) stats += ` {${info.cpuCores}|${info.maxRam}}`;
+			if(args['usage'] || args['verbose']) stats += ` (${Math.round(info.ramUsed / info.maxRam * 100) || 0}%)`;
+			const last = i == nodes.length - 1;
+			const branch = last ? '└─ ' : '├─ ';
+			htmlPrint(spacer + branch + `<a class="${color(server)}" onclick="${connectFn(server)}">${server + stats}</a>`);
+			render(tree[server], spacer + (last ? '    ' : '|   '));
+		}
+	}
+
+	// Help
+	if(args['help'] || args['_error'].length)
+		return ns.tprint(argParser.help(args['help'] ? null : args['_error'][0], args['_command']));
+
+	// Gather network information
+	const [ignore, network] = scanNetwork(ns, args['server'], args['depth']);
+
+	// Add flags filters
+	if(args['regex']) pruneTree(network, s => RegExp(args['regex']).test(s));
+	if(args['filter']) pruneTree(network, s => s == args['filter']);
+	if(args['rooted']) pruneTree(network, s => ns.getServer(s).hasAdminRights); // Already using getServer so we might as well keep using it
+	if(args['notRooted']) pruneTree(network, s => !ns.getServer(s).hasAdminRights); // Already using getServer so we might as well keep using it
+
+	// Output
+	addCSS('network-graph', CSS);
+	htmlPrint(`\n<a class="srv-tree-span ${color(args['server'])}" onclick="${connectFn(args['server'])}">${args['server']}</a>`);
+	render(network);
+	htmlPrint('\n');
+}
+
+/**
+ * BitBurner autocomplete.
+ *
+ * @param {{servers: string[], txts: string[], scripts: string[], flags: string[]}} data - Contextual information
  * @returns {string[]} - Pool of autocomplete options
  */
 export function autocomplete(data) {
 	return [...data.servers];
-}
-
-/**
- * Scan the network for devices and display as an ASCII tree.
- * @param ns {NS} - BitBurner API
- */
-export async function main(ns) {
-	/**
-	 * Iterate tree & print to screen
-	 * @param tree {Object} - Tree to parse
-	 * @param stats {Object} - Pool of stats to pull extra information from
-	 * @param spacer {string} - Spacer text for tree formatting
-	 */
-	function render(tree, stats, spacer = ' ') {
-		Object.keys(tree).forEach((device, i, arr) => {
-			const deviceStats = stats ? stats[device] : null;
-			const stat = deviceStats ? ` (${deviceStats.hasAdminRights ? 'ROOTED' : `${deviceStats.requiredHackingSkill}|${deviceStats.numOpenPortsRequired}`})` : '';
-			const last = i == arr.length - 1;
-			const branch = last ? '└─ ' : '├─ ';
-			ns.tprint(spacer + branch + device + stat);
-			render(tree[device], stats, spacer + (last ? '    ' : '|   '));
-		});
-	}
-
-	// Setup
-	ns.disableLog('ALL');
-	const argParser = new ArgParser('network-graph.js', 'Scan the network for devices and display as an ASCII tree:\n home\n  ├─ n00dles (ROOTED)\n  |   └─ max-hardware (80|1)\n  |       └─ neo-net (50|1)\n  ├─ foodnstuff (ROOTED)\n  └─ sigma-cosmetics (ROOTED)', null, [
-		{name: 'device', desc: 'Point to start scan from, defaults to current machine', optional: true, default: ns.getHostname(), type: 'string'},
-		{name: 'depth', desc: 'Depth to scan to', flags: ['-d', '--depth'], default: Infinity, type: 'num'},
-		{name: 'filter', desc: 'Filter to device matching name', flags: ['-f', '--filter'], type: 'string'},
-		{name: 'regex', desc: 'Filter to devices matching pattern', flags: ['-e', '--regex'], type: 'string'},
-		{name: 'rooted', desc: 'Filter to devices that have been rooted', flags: ['-r', '--rooted'], type: 'bool'},
-		{name: 'notRooted', desc: 'Filter to devices that have not been rooted', flags: ['-n', '--not-rooted'], type: 'bool'},
-		{name: 'verbose', desc: 'Display the required hack level & number of ports to root: (level|port)', flags: ['-v', '--verbose'], type: 'bool'},
-	]);
-
-	try {
-		// Run
-		const args = argParser.parse(ns.args);
-		const [devices, network] = scanNetwork(ns, args['device'], args['depth']);
-		const stats = devices.reduce((acc, d) => ({...acc, [d]: ns.getServer(d)}), {});
-		if(args['regex']) pruneTree(network, d => RegExp(args['regex']).test(d)); // Regex flag
-		else if(args['filter']) pruneTree(network, d => d == args['filter']); // Filter flag
-		if(args['rooted']) pruneTree(network, d => stats[d].hasAdminRights); // Rooted flag
-		else if(args['notRooted']) pruneTree(network, d => !stats[d].hasAdminRights); // Not rooted flag
-		ns.tprint(args['device']);
-		render(network, args['verbose'] ? stats : null);
-		ns.tprint('');
-	} catch(err) {
-		if(err instanceof ArgError) return ns.tprint(argParser.help(err.message));
-		throw err;
-	}
 }

@@ -1,95 +1,120 @@
-export class ArgError extends Error {}
-
 export class ArgParser {
 	/**
 	 * Create a unix-like argument parser to extract flags from the argument list. Can also create help messages.
-	 * @param name {string} - Script name
-	 * @param desc {string} - Help text desciption
-	 * @param examples {string[]} - Help text examples
-	 * @param argList {name: string, desc: string, flags: string[], type: string, default: any}[] - Array of CLI arguments
-	 * @param allowUnknown {boolean} - Allow unknown flags
+	 *
+	 * @param {string} name - Script name
+	 * @param {string} desc - Help description
+	 * @param {(ArgParser | {name: string, desc: string, flags?: string[], optional?: boolean, default?: any})[]} argList - Array of CLI arguments
+	 * @param {string[]} examples - Additional examples to display
 	 */
-	constructor(name, desc, examples, argList, allowUnknown = false) {
-		this.name = name ?? 'example.js';
-		this.description = desc ?? 'Example description';
-		this.examples = examples || [`${argList.find(arg => !!arg.flags) ? '[OPTIONS] ' : ''}${argList.filter(arg => !arg.flags).map(arg => (arg.optional ? `[${arg.name.toUpperCase()}]` : arg.name.toUpperCase()) + (arg.extras ? '...' : '')).join(' ')}`];
-		this.examples.push('--help');
-		this.argList = argList || [];
-		this.argList.push({name: 'help', desc: 'Display this help message', flags: ['-h', '--help'], type: 'bool'});
-		this.allowUnknown = allowUnknown;
+	constructor(name, desc, argList = [], examples = []) {
+		this.name = name;
+		this.desc = desc;
+
+		// Arguments
+		this.commands = argList.filter(arg => arg instanceof ArgParser);
+		this.args = argList.filter(arg => !arg.flags || !arg.flags.length);
+		this.flags = argList.filter(arg => !(arg instanceof ArgParser) && arg.flags && arg.flags.length);
+		this.flags.push({name: 'help', desc: 'Display this help message', flags: ['-h', '--help'], default: false});
+		this.defaults = argList.reduce((acc, arg) => ({...acc, [arg.name]: arg?.extras ? [] : arg.default ?? null}), {});
+
+		// Examples
+		this.examples = [
+			...examples,
+			`[OPTIONS] ${this.args.map(arg => (arg.optional ? `[${arg.name.toUpperCase()}]` : arg.name.toUpperCase()) + (arg.extras ? '...' : '')).join(' ')}`,
+			this.commands.length ? `[OPTIONS] COMMAND` : null,
+			`--help ${this.commands.length ? '[COMMAND]' : ''}`
+		].filter(e => !!e);
 	}
 
 	/**
 	 * Parse an array into an arguments dictionary using the configuration.
-	 * @param args {string[]} - Array of arguments to be parsed
+	 *
+	 * @param {string[]} args - Array of arguments to be parsed
 	 * @returns {object} - Dictionary of arguments with defaults applied
 	 */
 	parse(args) {
 		// Parse arguments
-		const queue = [...args], extra = [];
-		const parsed = this.argList.reduce((acc, arg) => ({...acc, [arg.name]: arg.default ?? (arg.type == 'bool' ? false : null)}), {});
-		// Flags
+		let extras = [], parsed = {...this.defaults, '_error': []}, queue = [...args];
 		while(queue.length) {
-			let parse = queue.splice(0, 1)[0];
-			if(parse[0] == '-') {
-				// Check combined flags
-				if(parse[1] != '-' && parse.length > 2) {
-					parse = `-${parse[1]}`;
-					queue = parse.substring(1).split('').map(a => `-${a}`).concat(queue);
+			let arg = queue.splice(0, 1)[0];
+			if(arg[0] == '-') { // Flags
+				// Check for combined shorthand
+				if(arg[1] != '-' && arg.length > 2) {
+					queue = [...arg.substring(2).split('').map(a => `-${a}`), ...queue];
+					arg = `-${arg[1]}`;
 				}
 				// Find & add flag
-				const split = parse.split('=');
-				const arg = this.argList.find(arg => arg.flags && arg.flags.includes(split[0] || parse));
-				if(arg == null) {
-					if(!this.allowUnknown) throw new ArgError(`Option unknown: ${parse}`);
-					extra.push(parse);
+				const combined = arg.split('=');
+				const argDef = this.flags.find(flag => flag.flags.includes(combined[0] || arg));
+				if(argDef == null) { // Not found, add to extras
+					extras.push(arg);
 					continue;
 				}
-				if(arg.name == 'help') throw new ArgError('Help');
-				const value = arg.type == 'bool' ? true : split[1] || queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0];
-				if(value == null) throw new ArgError(`Option missing value: ${arg.name}`);
-				parsed[arg.name] = value;
-			} else { 
-				// Save for required parsing
-				extra.push(parse);
+				const value = argDef.default === false ? true : argDef.default === true ? false : queue.splice(queue.findIndex(q => q[0] != '-'), 1)[0] || argDef.default;
+				if(value == null) parsed['_error'].push(`Option missing value: ${arg.name}`);
+				parsed[argDef.name] = value;
+			} else { // Command
+				const c = this.commands.find(command => command.name == arg);
+				if(!!c) {
+					const parsedCommand = c.parse(queue.splice(0, queue.length));
+					Object.keys(parsedCommand).forEach(key => {
+						if(parsed[key] != parsedCommand[key] && parsedCommand[key] == c.defaults[key])
+							delete parsedCommand[key];
+					});
+					parsed = {
+						...parsed,
+						...parsedCommand,
+						_command: c.name
+					};
+				} else extras.push(arg); // Not found, add to extras
 			}
 		}
 		// Arguments
-		this.argList.filter(arg => !arg.flags && !arg.extras).forEach(arg => {
-			if(!arg.optional && !extra.length) throw new ArgError(`Argument missing: ${arg.name.toUpperCase()}`);
-			const value = extra.splice(0, 1)[0];
-			if(value != null) parsed[arg.name] = value;
+		this.args.filter(arg => !arg.extras).forEach(arg => {
+			if(!arg.optional && !extras.length) parsed['_error'].push(`Argument missing: ${arg.name.toUpperCase()}`);
+			if(extras.length) parsed[arg.name] = extras.splice(0, 1)[0];
 		});
 		// Extras
-		const extraKey = this.argList.find(arg => arg.extras)?.name || 'extra';
-		parsed[extraKey] = extra;
+		const extraKey = this.args.find(arg => arg.extras)?.name || '_extra';
+		parsed[extraKey] = extras;
 		return parsed;
 	}
 
 	/**
-	 * Create help message from the provided description, examples & argument list.
-	 * @param message {string} - Message to display, defaults to the description
-	 * @returns {string} - Help message 
+	 * Create help message from the provided description & argument list.
+	 *
+	 * @param {string} message - Message to display, defaults to the description
+	 * @param {string} command - Command help message to show
+	 * @returns {string} - Help message
 	 */
-	help(msg) {
+	help(message = '', command = '') {
+		const spacer = (text) => Array(24 - text.length || 1).fill(' ').join('');
+
+		// Help with specific command
+		if(command) {
+			const argParser = this.commands.find(parser => parser.name == command);
+			if(!argParser) throw new Error(`${command.toUpperCase()} does not have a help`)
+			return argParser.help(message);
+		}
+
 		// Description
-		let message = '\n\n' + (msg && msg.toLowerCase() != 'help' ? msg : this.description);
-		// Usage
-		if(this.examples.length) message += '\n\nUsage:\t' + this.examples.map(ex => `run ${this.name} ${ex}`).join('\n\t');
+		let msg = `\n\n${message || this.desc}`;
+		// Examples
+		msg += '\n\nUsage:\t' + this.examples.map(ex => `run ${this.name} ${ex}`).join('\n\t');
 		// Arguments
-		const req = this.argList.filter(a => !a.flags);
-		if(req.length) message += '\n\n\t' + req.map(arg => {
-			const padding = 3 - ~~(arg.name.length / 8);
-			return `${arg.name.toUpperCase()}${Array(padding).fill('\t').join('')} ${arg.desc}`;
-		}).join('\n\t');
+		if(this.args.length) msg += '\n\n\t' + this.args
+			.map(arg => `${arg.name.toUpperCase()}${spacer(arg.name)}${arg.desc}`)
+			.join('\n\t');
 		// Flags
-		const opts = this.argList.filter(a => a.flags);
-		if(opts.length) message += '\n\nOptions:\n\t' + opts.map(a => {
-			const flgs = a.flags.join(' ');
-			const padding = 3 - ~~(flgs.length / 8);
-			return `${flgs}${Array(padding).fill('\t').join('')} ${a.desc}`;
+		msg += '\n\nOptions:\n\t' + this.flags.map(flag => {
+			const flags = flag.flags.join(', ');
+			return `${flags}${spacer(flags)}${flag.desc}`;
 		}).join('\n\t');
-		// Print final message
-		return `${message}\n\n`;
+		// Commands
+		if(this.commands.length) msg += '\n\nCommands:\n\t' + this.commands
+			.map(command => `${command.name}${spacer(command.name)}${command.desc}`)
+			.join('\n\t');
+		return `${msg}\n\n`;
 	}
 }

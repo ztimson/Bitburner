@@ -4,8 +4,9 @@ export class Logger {
 
 	/**
 	 * Create a nicer log with a banner.
-	 * @param ns {NS} - BitBurner API
-	 * @param lineFns {Function[]} - Functions to generate a line (Seperated by a linebreak)
+	 *
+	 * @param {NS} ns - BitBurner API
+	 * @param {Function[]} lineFns - Functions to generate a line (Seperated by a linebreak)
 	 */
 	constructor(ns, lineFns = []) {
 		this.ns = ns;
@@ -16,8 +17,9 @@ export class Logger {
 	}
 
 	/**
-	 * Add red error message to logs
-	 * @param message {string} - Text that will be added
+	 * Add red error message to logs.
+	 *
+	 * @param {string} message - Text that will be added
 	 */
 	error(message) { this.log(`ERROR: ${message}`); }
 
@@ -29,7 +31,7 @@ export class Logger {
 	}
 
 	/**
-	 * Print the header using the provided functions
+	 * Print the header using the provided functions.
 	 */
 	header() {
 		this.lineBreak();
@@ -40,8 +42,9 @@ export class Logger {
 	}
 
 	/**
-	 * Add message to the logs
-	 * @param message {string} - Text that will be added
+	 * Add message to the logs.
+	 *
+	 * @param {string} message - Text that will be added
 	 */
 	log(message = '') {
 		this.ns.clearLog();
@@ -52,8 +55,9 @@ export class Logger {
 	}
 
 	/**
-	 * Add orange warning to the logs
-	 * @param message {string} - Text that will be added
+	 * Add orange warning to the logs.
+	 *
+	 * @param {string} message - Text that will be added
 	 */
 	warn(message) { this.log(`WARN: ${message}`); }
 }

@@ -101,18 +101,6 @@ Commands:
 	start                   Start this device as the swarm manager
 ```
 
-#### Examples
-```bash
-# Start the manager
-run scripts/botnet-manager.js start
-# Add a single server to the botnet
-run scripts/botnet-manager.js join --device n00dles
-# Add all rooted servers to the botnet
-run scripts/crawler.js -r /scripts/botnet-manager.js join --device {{TARGET}}
-# Distribute & run a script on the entire botnet network
-run scripts/botnet-manager.js run /scripts/miner.js n00dles
-```
-
 ### [connect.js](./scripts/connect.js)
 **RAM:** 1.85 GB
 
@@ -124,26 +112,19 @@ you some time.
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/connect.js: 
 
-Search the network for a device and connect to it.
+Connect to a server anywhere in the network without a backdoor.
 
-Usage:	run connect.js DEVICE
-	run connect.js --help
+Usage:	run connect.js [OPTIONS] SERVER
+	run connect.js --help 
 
-	DEVICE			 Device to connect to
+	SERVER                  Server to connect to
 
 Options:
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Connect to a server without knowing where it is
-run scripts/connect.js CSEC
-run scripts/connect.js I.I.I.I
+	-h, --help              Display this help message
 ```
 
 ### [copy.js](./scripts/copy.js)
-**RAM:** 3.50 GB
+**RAM:** 4.20 GB
 
 Scripts often import other scripts requiring multiple `scp` calls before it can be run on a remote machine. This script 
 will automatically scan the file being copied for imports & recursively scan & copy the dependencies. Plus it has a
@@ -153,30 +134,25 @@ fancy animated loading bar.
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/copy.js: 
 
-Copy a file/script to a device along with any dependencies.
+Copy a file & it's dependencies to a server.
 
-Usage:	run copy.js [OPTIONS] FILE DEVICE
-	run copy.js --help
+Usage:	run copy.js [OPTIONS] FILE SERVER [ARGS]...
+	run copy.js --help 
 
-	FILE			 File to copy
-	DEVICE			 Device to copy file(s) to
+	FILE                    File to copy
+	SERVER                  Server to copy file(s) to
+	ARGS                    Arguments to start file/script with
 
 Options:
-	-n --no-deps		 Skip copying dependencies
-	-s --silent		 Surpress program output
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Copy the miner script with it's dependencies
-run scripts/copy.js /scripts/miner.js n00dles
-# Copy without the animated bar & dependencies
-run scripts/copy.js -sn /scripts/miner.js n00dles
+	-c, --cpu               Number of CPU threads to start script with, will use maximum if not specified
+	-e, --execute           Start script after copying
+	-n, --no-deps           Skip copying dependencies
+	-q, --quite             Suppress program output
+	-h, --help              Display this help message
 ```
 
 ### [crawler.js](./scripts/crawler.js)
-**RAM:** 4.15 GB
+**RAM:** 5.80 GB
 
 Mid-game solution to distribute & run scripts across the network.
 ```
@@ -184,40 +160,30 @@ Mid-game solution to distribute & run scripts across the network.
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/crawler.js: 
 
-Search the network for targets to execute a script against.
+Search the network for servers to execute a script against.
 
 Usage:	run crawler.js [OPTIONS] SCRIPT [ARGS]...
-	run crawler.js --help
+	run crawler.js --help 
 
-	SCRIPT			 Script to copy & execute
-	ARGS			 Arguments for script. Forward the current target with: {{TARGET}}
+	SCRIPT                  Script to copy & execute
+	ARGS                    Arguments for script. Forward the discovered server with: {{SERVER}}
 
 Options:
-	-c --cpu		 Number of CPU threads to use with script
-	-d --depth		 Depth to scan to, defaults to 3
-	-k --kill		 Kill all scripts running on device
-	-l --level		 Exclude targets with higher hack level, defaults to current hack level
-	-e --remote-exec 	 Copy script to remote device & run there
-	-r --rooted		 Filter to devices that have been rooted
-	-n --not-rooted		 Filter to devices that have not been rooted
-	-p --ports		 Exclude targets with too many closed ports
-	-s --silent		 Suppress program output
-	-v --verbose		 Display the device names in the final report
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Run a command on the local machine targeting discovered devices
-run scripts/crawler.js -n /scripts/rootkit.js {{TARGET}}
-# Chain the miner to the rootkit to automatically deploy it
-run scripts/crawler.js -n /scripts/rootkit.js {{TARGET}} /scripts/miner.js
-# Deploy a script on rooted devices
-run scripts/crawler.js -re /scripts/miner.js n00dles
+	-c, --cpu               Number of CPU threads to start script with, will use maximum if not specified
+	-d, --depth             Depth to scan to, defaults to 3
+	-k, --kill              Kill all running scripts on the server
+	--level                 Skip servers with higher hack level, defaults to current hack level
+	-e, --remote-exec       Execute script on remote server
+	-r, --rooted            Only servers that have been rooted
+	-n, --not-rooted        Only servers that have not been rooted
+	-p, --ports             Skip servers with too many closed ports
+	-q, --quite             Suppress program output
+	-v, --verbose           Display the server names in the final report
+	-h, --help              Display this help message
 ```
 
 ### [find-target.js](./scripts/find-target.js)
-**RAM:** 6.00 GB
+**RAM:** 4.05 GB
 
 A utility to help figure out which server is worth hacking the most. It does this by estimating the financial yield per
 minute for each server & returns the servers in a sorted list.
@@ -226,25 +192,17 @@ minute for each server & returns the servers in a sorted list.
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/find-target.js: 
 
-Scan the network for the best device(s) to mine.
+Scan the network for the best servers(s) to hack.
 
 Usage:	run find-target.js [OPTIONS] 
-	run find-target.js --help
+	run find-target.js --help 
 
 Options:
-	-c --count		 Number of devices to return in order from best to worst
-	-r --rooted		 Filter to devices that have been rooted
-	-n --not-rooted		 Filter to devices that have not been rooted
-	-v --verbose		 Display the estimated income per minute per core
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Rank all the servers on the network
-run scripts/find-target.js -v
-# Best server currently rooted
-run scripts/find-target.js -rc 1
+	-c, --count             Number of servers to return
+	-r, --rooted            Only servers that have been rooted
+	-n, --not-rooted        Only servers that have not been rooted
+	-v, --verbose           Display the estimated income per minute per core
+	-h, --help              Display this help message
 ```
 
 ### [hacknet-manager.js](./scripts/hacknet-manager.js)
@@ -259,23 +217,15 @@ Running script with 1 thread(s), pid 1 and args: ["--help"].
 Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
 
 Usage:	run hacknet-manager.js [OPTIONS] [LIMIT]
-	run hacknet-manager.js --help
+	run hacknet-manager.js --help 
 
-	LIMIT			 Limit the number of nodes the manager will buy, defaults to 8
+	LIMIT                   Limit the number of nodes the manager will buy, defaults to 8 or the current number of nodes
 
 Options:
-	-a --auto-limit		 Automatically increase the node limit when there is nothing to do
-	-b --balance		 Prevent spending bellow point
-	-s --sleep		 Amount of time to wait between purchases, defaults to 1 (second)
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Start the manager to 8 nodes & prevent spending while we have less than $1 million
-run scripts/hacknet-manager.js -b 1E6 8
-# Let the hacknet manage & grow itself
-run scripts/hacknet-manager.js -a
+	-a, --auto-limit        Automatically increase the node limit when there is nothing to do
+	-b, --balance           Prevent spending bellow point
+	-s, --sleep             Amount of time to wait between purchases, defaults to 1 (second)
+	-h, --help              Display this help message
 ```
 
 ### [miner.js](./scripts/miner.js)
@@ -288,78 +238,54 @@ or they can all target the server with the most money which is more efficient (s
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/miner.js: 
 
-Weaken, Grow, Hack loop to "mine" device for money. Tail for live updates.
+Buy, upgrade & manage Hacknet nodes automatically. Tail for live updates.
 
-Usage:	run miner.js [DEVICE]
-	run miner.js --help
+Usage:	run hacknet-manager.js [OPTIONS] [LIMIT]
+	run hacknet-manager.js --help 
 
-	DEVICE			 Device to mine, defaults to current machine
+	LIMIT                   Limit the number of nodes the manager will buy, defaults to 8 or the current number of nodes
 
 Options:
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Use home to hack another server
-run scripts/miner.js n00dles
-# Make remote server hack itself
-run scripts/rootkit.js noodles /scripts/miner.js
-# Make remote server hack another remote server
-run scripts/rootkit.js noodles /scripts/miner.js foodnstuff
-# Distribute the miner on entire network to hack a single server
-run scripts/crawler.js /scripts/rootkit.js {{TARGET}} /scripts/miner.js foodnstuff
+	-a, --auto-limit        Automatically increase the node limit when there is nothing to do
+	-b, --balance           Prevent spending bellow point
+	-s, --sleep             Amount of time to wait between purchases, defaults to 1 (second)
+	-h, --help              Display this help message
 ```
 
 ### [network-graph.js](./scripts/network-graph.js)
 **RAM:** 3.85 GB
 
 A utility to scan the network & build a visual tree of all the devices. It comes with lots of flags to narrow down the
-results. It's useful for figuring out where you are, manually finding targets & discovering the path to a server.
+results. It's useful for figuring out where you are, manually finding targets & discovering the path to a server & 
+connecting to it.
 ```
 [home ~/]> run /scripts/network-graph.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/network-graph.js: 
 
-Scan the network for devices and display as an ASCII tree:
- home
-  ├─ n00dles (ROOTED)
-  |   └─ max-hardware (80|1)
-  |       └─ neo-net (50|1)
-  ├─ foodnstuff (ROOTED)
-  └─ sigma-cosmetics (ROOTED)
+Scan the network for servers and display as an ASCII tree. Servers with root access are highlighted & bold. Click to
+automatically connect.
 
-Usage:	run network-graph.js [OPTIONS] [DEVICE]
-	run network-graph.js --help
+Usage:	run network-graph.js [OPTIONS] [SERVER]
+	run network-graph.js --help 
 
-	DEVICE			 Point to start scan from, defaults to current machine
+	SERVER                  Point to start scan from, defaults to local server
 
 Options:
-	-d --depth		 Depth to scan to
-	-f --filter		 Filter to device matching name
-	-e --regex		 Filter to devices matching pattern
-	-r --rooted		 Filter to devices that have been rooted
-	-n --not-rooted		 Filter to devices that have not been rooted
-	-v --verbose		 Display the required hack level & number of ports to root: (level|port)
-	-h --help		 Display this help message
-```
-
-#### Example
-```bash
-# Show the entire network
-run scripts/network-graph.js -v
-# Show servers within 3 hops that still need to be rooted
-run scripts/network-graph.js -nvd 3
-# Show servers you have rooted
-run scripts/network-graph.js -r
-# Find a specific server
-run scripts/network-graph.js -f CSEC
+	-d, --depth             Depth to scan to
+	-f, --filter            Filter to servers matching name
+	-e, --regex             Filter to servers matching pattern
+	-l, --level             Display the required hack level & number of ports to root: [level|port]
+	-n, --not-rooted        Filter to servers that have not been rooted
+	-r, --rooted            Filter to servers that have been rooted
+	-s, --specs             Display the server specifications: {CPU|RAM}
+	-u, --usage             Display the server utilization: (USG%)
+	-v, --verbose           Display level, specs & usage in that order: [HL|P] {CPU|RAM} (USG%)
+	-h, --help              Display this help message
 ```
 
 ### [rootkit.js](./scripts/rootkit.js)
-**RAM:** 5.05 GB <small>(Can be reduced to 4.80 GB)</small>
-
-Programs can be commented out to lower the cost of running.
+**RAM:** 4.65 GB
 
 Automatically gains root on the local or remote server. A script can be passed as an additional argument; it will be
 copied and automatically executed with the maximum number of threads after being rooted.
@@ -368,55 +294,51 @@ copied and automatically executed with the maximum number of threads after being
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/rootkit.js: 
 
-Automatically gain root access to a device. A file can also be uploaded & executed.
+Scan the network for servers and display as an ASCII tree. Servers with root access are highlighted & bold.
 
-Usage:	run rootkit.js [OPTIONS] [DEVICE] [SCRIPT] [ARGS]...
-	run rootkit.js --help
+Usage:	run network-graph.js [OPTIONS] [SERVER]
+	run network-graph.js --help 
 
-	DEVICE			 Device to root, defaults to current machine
-	SCRIPT			 Script to copy & execute
-	ARGS			 Arguments for script. Forward the current target with: {{TARGET}}
+	SERVER                  Point to start scan from, defaults to local server
 
 Options:
-	-c --cpu		 Number of CPU threads to use with script
-	-s --silent		 Surpress program output
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Hack a remote server
-run scripts/rootkit.js n00dles
-# Start the miner after hacking
-run scripts/rootkit.js n00dles /scripts/miner.js foodnstuff
+	-d, --depth             Depth to scan to
+	-f, --filter            Filter to servers matching name
+	-e, --regex             Filter to servers matching pattern
+	-l, --level             Display the required hack level & number of ports to root: [level|port]
+	-n, --not-rooted        Filter to servers that have not been rooted
+	-r, --rooted            Filter to servers that have been rooted
+	-s, --specs             Display the server specifications: {CPU|RAM}
+	-u, --usage             Display the server utilization: (USG%)
+	-v, --verbose           Display level, specs & usage in that order: [HL|P] {CPU|RAM} (USG%)
+	-h, --help              Display this help message
 ```
 
 ### [server-manager.js (WIP)](./scripts/server-manager.js)
-**RAM:** 9.35 GB
+**RAM:** 11.35 GB
 
-Early game script to handle purchasing and upgrading servers for more computer power.
+Mid-game script to handle purchasing and upgrading servers for more computer power. You can also set a script to run
+automatically after purchase. Useful to chain with `miner.js` or `botnet.js`.
 ```
 [home ~/]> run /scripts/server-manager.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
 /scripts/server-manager.js: 
 
-Automate the buying & upgrading of servers.
+Automate the buying & upgrading of servers. Automatically starts script after purchase. Tail for live updates.
 
-Usage:	run server-manager.js [OPTIONS] 
+Usage:	run server-manager.js [OPTIONS] [SCRIPT] [ARGS]...
 	run server-manager.js --help 
+
+	SCRIPT                  Script to copy & execute
+	ARGS                    Arguments for script. Forward the discovered server with: {{SERVER}}
 
 Options:
 	-b, --balance           Prevent spending bellow point
+	-c, --cpu               Number of CPU threads to start script with, will use maximum if not specified
 	-l, --limit             Limit the number of servers that can be purchased, defaults to 25
 	-r, --ram               Amount of RAM to purchase new servers with, defaults to 8 GB
 	-s, --sleep             Amount of time to wait between purchases, defaults to 1 (second)
 	-h, --help              Display this help message
-```
-
-#### Examples
-```bash
-# Start automatically purchasing & upgrading servers
-run scripts/server-manager.js --ram 16
 ```
 
 ### [update.js](./scripts/update.js)
@@ -432,20 +354,12 @@ Running script with 1 thread(s), pid 1 and args: ["--help"].
 Download the latest script updates from the repository using wget.
 
 Usage:	run update.js [OPTIONS] [DEVICE]
-	run update.js --help
+	run update.js --help 
 
-	DEVICE			 Device to update, defaults to current machine
+	DEVICE                  Device to update, defaults to current machine
 
 Options:
-	--skip-self		 Skip updating self (for debugging & used internally)
-	--no-banner		 Hide the banner (Used internally)
-	-h --help		 Display this help message
-```
-
-#### Examples
-```bash
-# Download the scripts to local computer
-run scripts/update.js
-# Download scripts to a remote computer
-run scripts/update.js n00dles
+	--skip-self             Skip updating self (for debugging & used internally)
+	--no-banner             Hide the banner (Used internally)
+	-h, --help              Display this help message
 ```

@@ -1,6 +1,6 @@
-import {ArgParser} from '/scripts/lib/arg-parser2';
+import {ArgParser} from '/scripts/lib/arg-parser';
 import {Logger} from '/scripts/lib/logger';
-import {copyWithDependencies} from '/scripts/lib/utils';
+import {copyWithDependencies} from '/scripts/copy';
 
 class Manager {
     running;
@@ -125,32 +125,32 @@ export async function main(ns) {
     // Setup
     ns.disableLog('ALL');
     const hostname = ns.getHostname(), portNum = 1;
-    const argParser = new ArgParser(ns, 'botnet-manager.js', 'Connect & manage a network of devices to launch distributed attacks.', [
-        new ArgParser(ns, 'copy', 'Copy file & dependencies to swarm nodes', [
+    const argParser = new ArgParser('botnet-manager.js', 'Connect & manage a network of devices to launch distributed attacks.', [
+        new ArgParser('copy', 'Copy file & dependencies to swarm nodes', [
             {name: 'file', desc: 'File to copy', default: false},
             {name: 'manager', desc: 'Copy to manager node', flags: ['-m', '--manager'], default: false},
             {name: 'noDeps', desc: 'Skip copying dependencies', flags: ['-d', '--no-deps'], default: false},
             {name: 'workers', desc: 'Copy to worker nodes', flags: ['-w', '--workers'], default: false},
         ]),
-        new ArgParser(ns, 'join', 'Connect device as a worker node to the swarm', [
+        new ArgParser('join', 'Connect device as a worker node to the swarm', [
             {name: 'device', desc: 'Device to connect, defaults to the current machine', optional: true, default: hostname}
         ]),
-        new ArgParser(ns, 'kill', 'Kill any scripts running on worker nodes'),
-        new ArgParser(ns, 'leave', 'Disconnect worker node from swarm', [
+        new ArgParser('kill', 'Kill any scripts running on worker nodes'),
+        new ArgParser('leave', 'Disconnect worker node from swarm', [
             {name: 'device', desc: 'Device to disconnect, defaults to the current machine', optional: true, default: hostname}
         ]),
-        new ArgParser(ns, 'run', 'Copy & run script on all worker nodes', [
+        new ArgParser('run', 'Copy & run script on all worker nodes', [
             {name: 'script', desc: 'Script to copy & execute', type: 'string'},
             {name: 'args', desc: 'Arguments for script. Forward the current target with: {{TARGET}}', optional: true, extras: true},
         ]),
-        new ArgParser(ns, 'start', 'Start this device as the swarm manager'),
+        new ArgParser('start', 'Start this device as the swarm manager'),
         {name: 'silent', desc: 'Suppress program output', flags: ['-s', '--silent'], default: false},
     ]);
     const args = argParser.parse(ns.args);
 
     // Help
-    if(args['help'] || args['_error'])
-        return ns.tprint(argParser.help(args['help'] ? null : args['_error'], args['_command']));
+    if(args['help'] || args['_error'].length)
+        return ns.tprint(argParser.help(args['help'] ? null : args['_error'][0], args['_command']));
 
     // Run command
     if(args['_command'] == 'start') { // Start botnet manager
