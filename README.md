@@ -9,6 +9,7 @@ A collection of scripts & information pertaining to the [open source](https://gi
 - [Guide](#guide)
   - [BitNode 1](#bitnode-1)
 - [Scripts](#scripts)
+    - [banner.js](#bannerjs)
     - [botnet-manager.js (WIP)](#botnet-managerjs-wip)
     - [connect.js](#connectjs)
     - [copy.js](#copyjs)
