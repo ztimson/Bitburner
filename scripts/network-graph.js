@@ -32,8 +32,8 @@ export async function main(ns) {
 	const argParser = new ArgParser('network-graph.js', 'Scan the network for servers and display as an ASCII tree. Servers with root access are highlighted & bold. Click to automatically connect.', [
 		{name: 'server', desc: 'Point to start scan from, defaults to local server', optional: true, default: ns.getHostname()},
 		{name: 'depth', desc: 'Depth to scan to', flags: ['-d', '--depth'], default: Infinity},
-		{name: 'filter', desc: 'Filter to servers matching name', flags: ['-f', '--filter'], default: false},
-		{name: 'regex', desc: 'Filter to servers matching pattern', flags: ['-e', '--regex'], default: false},
+		{name: 'filter', desc: 'Filter to servers matching name', flags: ['-f', '--filter']},
+		{name: 'regex', desc: 'Filter to servers matching pattern', flags: ['-e', '--regex']},
 		{name: 'level', desc: 'Display the required hack level & number of ports to root: [level|port]', flags: ['-l', '--level'], default: false},
 		{name: 'notRooted', desc: 'Filter to servers that have not been rooted', flags: ['-n', '--not-rooted'], default: false},
 		{name: 'rooted', desc: 'Filter to servers that have been rooted', flags: ['-r', '--rooted'], default: false},
