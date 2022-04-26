@@ -189,6 +189,7 @@ export async function main(ns) {
 		'lib/arg-parser.js',
 		'lib/logger.js',
 		'lib/utils.js',
+		'banner.js',
 		'botnet-manager.js',
 		'connect.js',
 		'copy.js',
@@ -197,7 +198,8 @@ export async function main(ns) {
 		'hacknet-manager.js',
 		'miner.js',
 		'network-graph.js',
-		'rootkit.js'
+		'rootkit.js',
+		'server-manager.js',
 	];
 
 	// Help
