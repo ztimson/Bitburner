@@ -71,6 +71,25 @@ run this periodically as your hack level increases & you unlock more exploits:
 
 ## Scripts
 
+### [banner.js](./scripts/banner.js)
+**RAM:** 1.60 GB
+
+Aesthetic & serves no real purpose. Prints a banner to the terminal & can repeat after game restarts.
+```
+[home ~/]> run scripts/banner.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/banner.js: 
+
+Display an ASCII banner.
+
+Usage:	run banner.js [OPTIONS] 
+	run banner.js --help 
+
+Options:
+	-r, --reboot            Automatically display after game reboots
+	-h, --help              Display this help message
+```
+
 ### [botnet-manager.js (WIP)](./scripts/botnet-manager.js)
 **RAM:** 7.15 GB
 
