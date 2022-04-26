@@ -80,7 +80,7 @@ export async function main(ns) {
 			const last = i == nodes.length - 1;
 			const branch = last ? '└─ ' : '├─ ';
 			htmlPrint(spacer + branch + `<a class="${color(server)}" onclick="${connectFn(server)}">${server + stats}</a>`);
-			render(tree[server], spacer + (last ? '    ' : '|   '));
+			render(tree[server], spacer + (last ? '    ' : '│   '));
 		}
 	}
 
