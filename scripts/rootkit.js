@@ -86,6 +86,11 @@ export async function main(ns) {
 
 	// Start script if required
 	if(args['script']) {
+		const threads = args['cpu'] || maxThreads(ns, args['script'], args['server']);
+		if(!threads) {
+			ns.tprint(`Server does not have enough RAM to start script.`);
+			ns.exit();
+		}
 		// Copy script & it's dependencies
 		const files = await copyWithDependencies(ns, args['script'], args['server']);
 		if(!args['quite']) {
@@ -95,14 +100,13 @@ export async function main(ns) {
 		}
 
 		// Start the script
-		const threads = args['cpu'] || maxThreads(ns, args['file'], args['server']) || 1;
 		if(!args['quite']) {
 			ns.tprint('');
 			ns.tprint(`Executing with ${threads} thread${threads > 1 ? 's' : ''}...`);
 			await ns.sleep(500);
 		}
 		ns.killall(args['server']);
-		const pid = ns.exec(args['file'], args['server'], threads, args['args']);
+		const pid = ns.exec(args['script'], args['server'], threads, ...args['args']);
 		if(!args['quite']) {
 			ns.tprint(!!pid ? 'Done!' : 'Failed to start');
 			ns.tprint('');

@@ -81,7 +81,7 @@ export async function main(ns) {
             await ns.sleep(500);
         }
         ns.killall(args['server']);
-        const pid = ns.exec(args['file'], args['server'], threads, args['args']);
+        const pid = ns.exec(args['file'], args['server'], threads, ...args['args']);
         if(!args['quite']) {
             ns.tprint(!!pid ? 'Done!' : 'Failed to start');
             ns.tprint('');

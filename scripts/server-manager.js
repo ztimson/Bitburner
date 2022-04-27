@@ -52,7 +52,7 @@ export async function main(ns) {
             ns.purchaseServer(`${serverPrefix}${servers.length}`, args['ram']);
 
             // Run the script if requested
-            if(args['script']) await startScript(`${serverPrefix}${servers.length - 1}`);
+            if(args['script']) await startScript(`${serverPrefix}${servers.length}`);
         } else { // Check for upgrades
             let upgrades = servers.map(server => {
                 // Calculate next RAM upgrades (must be a power of two: 2, 4, 8, 16, 32...)
