@@ -74,7 +74,7 @@ export async function main(ns) {
 		for(let i = 0; i < nodes.length; i++) {
 			const server = nodes[i], info = ns.getServer(server);
 			let stats = '';
-			if(args['level'] || args['verbose']) stats += ` [${info.requiredHackingSkill}|${info.openPortCount}]`;
+			if(args['level'] || args['verbose']) stats += ` [${info.requiredHackingSkill}|${info.numOpenPortsRequired}]`;
 			if(args['specs'] || args['verbose']) stats += ` {${info.cpuCores}|${info.maxRam}}`;
 			if(args['usage'] || args['verbose']) stats += ` (${Math.round(info.ramUsed / info.maxRam * 100) || 0}%)`;
 			const last = i == nodes.length - 1;
