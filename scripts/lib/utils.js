@@ -13,6 +13,18 @@ export function addCSS(id, css) {
 }
 
 /**
+ * Calculate the maximum number of threads a script can be executed with the remaining available RAM on a server.
+ *
+ * @param {NS} ns - BitBurner API
+ * @param {string} script - Full path to script
+ * @param {string} server - Server script will run on
+ * @returns {number} - Number of threads the server will be able to support
+ */
+export function availableThreads(ns, script, server = ns.getHostname()) {
+	return ~~((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / ns.getScriptRam(script, ns.getHostname()));
+}
+
+/**
  * Format number to look like a dollar value ($1,000.00).
  *
  * @param {number} num - Number to format
@@ -46,7 +58,7 @@ export function htmlPrint(html, wrap = true) {
 }
 
 /**
- * Calculate the maximum number of threads a script can be executed with.
+ * Calculate the maximum number of threads a script can be executed with using all server resources.
  *
  * @param {NS} ns - BitBurner API
  * @param {string} script - Full path to script
@@ -54,7 +66,7 @@ export function htmlPrint(html, wrap = true) {
  * @returns {number} - Number of threads the server will be able to support
  */
 export function maxThreads(ns, script, server = ns.getHostname()) {
-	return ~~(ns.getServerMaxRam(server) / ns.getScriptRam(script, ns.getHostname()))
+	return ~~(ns.getServerMaxRam(server) / ns.getScriptRam(script, ns.getHostname()));
 }
 
 /**
