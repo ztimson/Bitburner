@@ -62,7 +62,7 @@ export function main(ns) {
     bestTarget(ns, servers).map(s => [...s, ns.hasRootAccess(s[0])])
         .filter(s => (!args['rooted'] || s[2]) || (!args['notRooted'] || !s[2]))
         .filter((s, i) => i < args['count'])
-        .map(s => `${s[0]}${args['verbose'] ? ` (${toCurrency(s[1])})` : ''}`)
+        .map(s => `${s[0]}${args['verbose'] ? ` (~${toCurrency(s[1])}/min)` : ''}`)
         .forEach((s, i) => ns.tprint(`${i + 1}) ${s}`));
     ns.tprint('');
 }
