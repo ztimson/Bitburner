@@ -27,7 +27,7 @@ export async function main(ns) {
 	// Logger
 	const logger = new Logger(ns, [
 		() => `Mining: ${args['server']}`,
-		() => `Security: ${Math.round(security)}/${minSecurity}\tBalance: \$${toCurrency(balance)}`
+		() => `Security: ${Math.round(security)}/${minSecurity}\tBalance: ${toCurrency(balance)}`
 	]);
 
 	// Main loop

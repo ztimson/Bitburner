@@ -1,7 +1,7 @@
 import {ArgParser} from '/scripts/lib/arg-parser';
 import {availableExploits} from '/scripts/rootkit';
 import {copyWithDependencies} from '/scripts/copy';
-import {maxThreads} from "/scripts/lib/utils";
+import {availableThreads} from "/scripts/lib/utils";
 
 /**
  * Scan the network for servers.
@@ -70,7 +70,7 @@ export async function main(ns) {
 		// Start script
 		if(args['kill']) ns.killall(server);
 		const scriptArgs = args['args'].map(arg => arg.toUpperCase() == '{{SERVER}}' ? server : arg);
-		const threads = args['cpu'] || maxThreads(ns, args['script'], server) || 1;
+		const threads = args['cpu'] || availableThreads(ns, args['script'], server) || 1;
 		if(args['remoteExec']) await copyWithDependencies(ns, args['script'], server);
 		const pid = ns.exec(args['script'], args['remoteExec'] ? server : localhost, threads, ...scriptArgs);
 		if(pid == 0) {
