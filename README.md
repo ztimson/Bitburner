@@ -19,7 +19,7 @@ A collection of scripts & information pertaining to the [open source](https://gi
     - [miner.js](#minerjs)
     - [network-graph.js](#network-graphjs)
     - [rootkit.js](#rootkitjs)
-    - [server-manager.js (WIP)](#server-managerjs-wip)
+    - [server-manager.js](#server-managerjs)
     - [update.js](#updatejs)
 
 ## Quick Start
@@ -334,7 +334,7 @@ Options:
 	-h, --help              Display this help message
 ```
 
-### [server-manager.js (WIP)](./scripts/server-manager.js)
+### [server-manager.js](./scripts/server-manager.js)
 **RAM:** 11.35 GB
 
 Mid-game script to handle purchasing and upgrading servers for more computer power. You can also set a script to run
