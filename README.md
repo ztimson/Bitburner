@@ -18,6 +18,7 @@ A collection of scripts & information pertaining to the [open source](https://gi
     - [hacknet-manager.js](#hacknet-managerjs)
     - [miner.js](#minerjs)
     - [network-graph.js](#network-graphjs)
+    - [rm.js](#rmjs)
     - [rootkit.js](#rootkitjs)
     - [server-manager.js](#server-managerjs)
     - [update.js](#updatejs)
@@ -301,6 +302,31 @@ Options:
 	-s, --specs             Display the server specifications: {CPU|RAM}
 	-u, --usage             Display the server utilization: (USG%)
 	-v, --verbose           Display level, specs & usage in that order: [HL|P] {CPU|RAM} (USG%)
+	-h, --help              Display this help message
+```
+
+### [rm.js](./scripts/rm.js)
+**RAM:** 2.85 GB
+
+[BitBurner-Connector](https://plugins.jetbrains.com/plugin/18338-bitburner-connector) would occasionally push my IDE
+files to the game, so I created this simple script to recursively search & delete files from a directory to save me 
+from having to delete files one-by-one.
+```
+[home ~/scripts]> run /scripts/rm.js --help
+Running script with 1 thread(s), pid 1 and args: ["--help"].
+/scripts/rm.js: 
+
+Recursively delete files inside a directory
+
+Usage:	run rm.js [OPTIONS] PATH [SERVER]
+	run rm.js --help 
+
+	PATH                    Path to recursively search
+	SERVER                  Run on remote server
+
+Options:
+	-f, --force             Remove game files (.exe, .lit, .msg)
+	-r, --recursive         Delete everything inside directory
 	-h, --help              Display this help message
 ```
 
