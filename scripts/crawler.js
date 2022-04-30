@@ -80,7 +80,8 @@ export async function main(ns) {
 
 		// Wait for script to finish if local
 		if(!args['remoteExec'])
-			while(ns.scriptRunning(args['script'], localhost)) await ns.sleep(1000);
+			while(ns.isRunning(args['script'], localhost, ...scriptArgs))
+				await ns.sleep(1000);
 		complete.push(server);
 	}
 
