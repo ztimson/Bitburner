@@ -12,7 +12,7 @@ class Manager {
         this.config = config;
         this.device = device;
         this.logger = new Logger(this.ns, [
-            () => `Swarm Manager: ${device}`,
+            () => `Botnet: ${device}`,
             () => `Workers: ${this.workers.length}\tCores: ${this.workers.reduce((acc, w) => acc + w.cpuCores, 0)}\tRAM: ${this.workers.reduce((acc, w) => acc + w.maxRam, 0)} GB`
         ]);
 
@@ -21,7 +21,7 @@ class Manager {
             let payload = ns.readPort(port);
             return payload == 'NULL PORT DATA' ? null : payload;
         }
-        this.tx = (payload) => ns.writePort(portNum + 10, JSON.stringify(payload));
+        this.tx = (payload) => ns.writePort(port + 10, JSON.stringify(payload));
     }
 
     isCommand(payload) { return ['copy', 'join', 'kill', 'leave', 'run'].includes(payload['command']); }
@@ -125,37 +125,37 @@ export async function main(ns) {
     // Setup
     ns.disableLog('ALL');
     const hostname = ns.getHostname(), portNum = 1;
-    const argParser = new ArgParser('botnet-manager.js', 'Connect & manage a network of devices to launch distributed attacks.', [
-        new ArgParser('copy', 'Copy file & dependencies to swarm nodes', [
+    const argParser = new ArgParser('botnet-manager.js', 'Connect & manage a network of servers to launch distributed attacks.', [
+        new ArgParser('copy', 'Copy file & dependencies to botnet', [
             {name: 'file', desc: 'File to copy', default: false},
-            {name: 'manager', desc: 'Copy to manager node', flags: ['-m', '--manager'], default: false},
+            {name: 'control', desc: 'Copy to master server', flags: ['-c', '--control'], default: false},
             {name: 'noDeps', desc: 'Skip copying dependencies', flags: ['-d', '--no-deps'], default: false},
-            {name: 'workers', desc: 'Copy to worker nodes', flags: ['-w', '--workers'], default: false},
+            {name: 'slave', desc: 'Copy to slave servers', flags: ['-s', '--slave'], default: false},
         ]),
-        new ArgParser('join', 'Connect device as a worker node to the swarm', [
+        new ArgParser('join', 'Connect server as a botnet slave', [
             {name: 'device', desc: 'Device to connect, defaults to the current machine', optional: true, default: hostname}
         ]),
-        new ArgParser('kill', 'Kill any scripts running on worker nodes'),
+        new ArgParser('kill', 'Kill any scripts running on the botnet'),
         new ArgParser('leave', 'Disconnect worker node from swarm', [
             {name: 'device', desc: 'Device to disconnect, defaults to the current machine', optional: true, default: hostname}
         ]),
-        new ArgParser('run', 'Copy & run script on all worker nodes', [
+        new ArgParser('run', 'Copy & run script on the botnet', [
             {name: 'script', desc: 'Script to copy & execute', type: 'string'},
             {name: 'args', desc: 'Arguments for script. Forward the current target with: {{TARGET}}', optional: true, extras: true},
         ]),
-        new ArgParser('start', 'Start this device as the swarm manager'),
+        new ArgParser('start', 'Start this server as the botnet manager'),
         {name: 'silent', desc: 'Suppress program output', flags: ['-s', '--silent'], default: false},
     ]);
     const args = argParser.parse(ns.args);
 
     // Help
-    if(args['help'] || args['_error'].length)
+    if(args['help'] || args['_error'].length || !args['_command'])
         return ns.tprint(argParser.help(args['help'] ? null : args['_error'][0], args['_command']));
 
     // Run command
     if(args['_command'] == 'start') { // Start botnet manager
-        ns.tprint(`Starting swarm manager: ${hostname}`);
-        ns.tprint(`Connect a worker with: run botnet-manager.js join`);
+        ns.tprint(`Starting ${hostname} as botnet manager`);
+        ns.tprint(`Connect more nodes with: run botnet-manager.js join [SERVER]`);
         await new Manager(ns, hostname, portNum).start();
     } else if(args['_command'] == 'copy') { // Issue copy command
         await ns.writePort(portNum, JSON.stringify({
