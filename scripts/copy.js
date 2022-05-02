@@ -64,7 +64,8 @@ export async function main(ns) {
         await ns.scp(args['file'], args['server']);
         if(!args['quite']) await progressBar(ns, args['file']);
     } else {
-        const files = copyWithDependencies(ns, args['file'], args['server']);
+        const files = await copyWithDependencies(ns, args['file'], args['server']);
+        console.log(files);
         if(!args['quite']) {
             for(let file of files) {
                 await progressBar(ns, file);
