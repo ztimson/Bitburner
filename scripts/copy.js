@@ -65,7 +65,6 @@ export async function main(ns) {
         if(!args['quite']) await progressBar(ns, args['file']);
     } else {
         const files = await copyWithDependencies(ns, args['file'], args['server']);
-        console.log(files);
         if(!args['quite']) {
             for(let file of files) {
                 await progressBar(ns, file);
