@@ -1,9 +1,9 @@
-# BitBurner - Scripts
+# Bitburner - Scripts
 A collection of scripts & information pertaining to the [open source](https://github.com/danielyxie/bitburner) game 
-[BitBurner](https://danielyxie.github.io/bitburner/).
+[Bitburner](https://danielyxie.github.io/bitburner/).
 
 ## Table of Contents
-- [BitBurner - Scripts](#bitburner-scripts)
+- [Bitburner - Scripts](#bitburner-scripts)
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
 - [Guide](#guide)
@@ -27,7 +27,7 @@ A collection of scripts & information pertaining to the [open source](https://gi
 
 ```bash
 # Download the update script in-game & run it
-wget https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/update.js scripts/update.js
+wget https://gitlab.zakscode.com/ztimson/Bitburner/-/raw/develop/scripts/update.js scripts/update.js
 run scripts/update.js # Repeat to pull the latest
 
 # View the network
@@ -58,7 +58,7 @@ first if you haven't already.
 
 ### BitNode 1
 1. First you need to download this repo into the game. Manually download `update.js` & run it:
-`wget https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/update.js scripts/update.js; run scripts/update.js` 
+`wget https://gitlab.zakscode.com/ztimson/Bitburner/-/raw/develop/scripts/update.js scripts/update.js; run scripts/update.js` 
 2. Scan the network to figure out your bearings, take note of discovered server's required hack level:
 `run scripts/network-graph.js -vd 3`
 3. Root the lowest level server (probably n00dles) & make it hack itself for money. You should repeat this step when 
@@ -308,7 +308,7 @@ Options:
 ### [rm.js](./scripts/rm.js)
 **RAM:** 2.85 GB
 
-[BitBurner-Connector](https://plugins.jetbrains.com/plugin/18338-bitburner-connector) would occasionally push my IDE
+[bitburner-connector](https://plugins.jetbrains.com/plugin/18338-bitburner-connector) would occasionally push my IDE
 files to the game, so I created this simple script to recursively search & delete files from a directory to save me 
 from having to delete files one-by-one.
 ```
