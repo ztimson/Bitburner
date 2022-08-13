@@ -6,8 +6,6 @@ A collection of scripts & information pertaining to the [open source](https://gi
 - [Bitburner - Scripts](#bitburner-scripts)
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
-- [Guide](#guide)
-  - [BitNode 1](#bitnode-1)
 - [Scripts](#scripts)
     - [banner.js](#bannerjs)
     - [botnet-manager.js (WIP)](#botnet-managerjs-wip)
@@ -51,25 +49,6 @@ backdoor
 ```
 
 Learn more about the [available scripts](#scripts) bellow or pass the `--help` flag to any of the included scripts in-game.
-
-## Guide
-This guide documents how you can use this repository to progress through the game. You should complete the tutorial
-first if you haven't already.
-
-### BitNode 1
-1. First you need to download this repo into the game. Manually download `update.js` & run it:
-`wget https://gitlab.zakscode.com/ztimson/Bitburner/-/raw/develop/scripts/update.js scripts/update.js; run scripts/update.js` 
-2. Scan the network to figure out your bearings, take note of discovered server's required hack level:
-`run scripts/network-graph.js -vd 3`
-3. Root the lowest level server (probably n00dles) & make it hack itself for money. You should repeat this step when 
-ever your hack level is high enough to hack another a new server. `run scripts/rootkit.js n00dles /scripts/miner.js`
-4. Start `hacknet-manger.js`. You won't have enough *RAM* in the beginning to run the manager & hack servers. It's 
-recommended you `tail` the manager, so you can easily start/stop it as needed. `run script/hacknet-manager.js -a`
-5. Once you have enough money ($??,???.??), upgrade your home severs *RAM*: 
-`City > alpha ent. > Upgrade 'home' RAM (8.00GB -> 16.00GB)`
-6. At this point you have enough *RAM* to use `crawler.js` to automatically discover servers & hack them. Continue to
-run this periodically as your hack level increases & you unlock more exploits:
-`run scripts/crawler.js -n /scripts/rootkit.js {{TARGET}} /scripts/miner.js`
 
 ## Scripts
 
