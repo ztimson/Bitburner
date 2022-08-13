@@ -183,7 +183,7 @@ export async function main(ns) {
 		{name: 'no-banner', desc: 'Hide the banner (Used internally)', flags: ['--no-banner'], default: false}
 	]);
 	const args = argParser.parse(ns.args || []);
-	const src = 'https://gitlab.zakscode.com/ztimson/BitBurner/-/raw/develop/scripts/';
+	const src = 'https://raw.githubusercontent.com/PointyTrident/Bitburner/develop/scripts/';
 	const dest = '/scripts/';
 	const fileList = [
 		'lib/arg-parser.js',
