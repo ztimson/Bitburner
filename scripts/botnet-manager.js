@@ -1,16 +1,20 @@
 import {ArgParser} from '/scripts/lib/arg-parser';
+import {Config} from '/scripts/lib/data-file';
 import {Logger} from '/scripts/lib/logger';
 import {copyWithDependencies} from '/scripts/copy';
+
+const configPath = '/etc/botnet.txt';
+const port = 1;
 
 class Manager {
     running;
     workers = [];
 
-    constructor(ns, device, port, config = '/conf/botnet.txt') {
+    async constructor(ns, hostname) {
         ns.disableLog('ALL');
         this.ns = ns;
-        this.config = config;
-        this.device = device;
+        this.config = new Config(configPath);
+        this.hostname = hostname;
         this.logger = new Logger(this.ns, [
             () => `Botnet: ${device}`,
             () => `Workers: ${this.workers.length}\tCores: ${this.workers.reduce((acc, w) => acc + w.cpuCores, 0)}\tRAM: ${this.workers.reduce((acc, w) => acc + w.maxRam, 0)} GB`
@@ -124,7 +128,8 @@ class Manager {
 export async function main(ns) {
     // Setup
     ns.disableLog('ALL');
-    const hostname = ns.getHostname(), portNum = 1;
+    const config = await new Config(ns, configPath).load();
+    const hostname = ns.getHostname();
     const argParser = new ArgParser('botnet-manager.js', 'Connect & manage a network of servers to launch distributed attacks.', [
         new ArgParser('copy', 'Copy file & dependencies to botnet', [
             {name: 'file', desc: 'File to copy', default: false},
@@ -139,6 +144,7 @@ export async function main(ns) {
         new ArgParser('leave', 'Disconnect worker node from swarm', [
             {name: 'device', desc: 'Device to disconnect, defaults to the current machine', optional: true, default: hostname}
         ]),
+        new ArgParser('list', 'List connected worker nodes'),
         new ArgParser('run', 'Copy & run script on the botnet', [
             {name: 'script', desc: 'Script to copy & execute', type: 'string'},
             {name: 'args', desc: 'Arguments for script. Forward the current target with: {{TARGET}}', optional: true, extras: true},
@@ -154,9 +160,9 @@ export async function main(ns) {
 
     // Run command
     if(args['_command'] == 'start') { // Start botnet manager
-        ns.tprint(`Starting ${hostname} as botnet manager`);
-        ns.tprint(`Connect more nodes with: run botnet-manager.js join [SERVER]`);
-        await new Manager(ns, hostname, portNum).start();
+        ns.tprint(`Starting botnet controller on: ${hostname}`);
+        ns.tprint(`Connect workers to botnet with: run botnet-manager.js join [SERVER]`);
+        await new Manager(ns, hostname).start();
     } else if(args['_command'] == 'copy') { // Issue copy command
         await ns.writePort(portNum, JSON.stringify({
             command: 'copy',
@@ -176,6 +182,9 @@ export async function main(ns) {
             command: 'leave',
             value: args['device']
         }));
+    } else if(args['_command'] == 'list') {
+        ns.tprint('Botnet workers:');
+        ns.tprint(config['workers'].map(worker => worker.hostname).join(', '));
     } else if(args['_command'] == 'run') { // Issue run command
         await ns.writePort(portNum, JSON.stringify({
             command: 'run',
