@@ -2,6 +2,8 @@
 A collection of scripts & information pertaining to the [open source](https://github.com/danielyxie/bitburner) game 
 [Bitburner](https://danielyxie.github.io/bitburner/).
 
+![Bitburner Logo](bitburner.png)
+
 ## Table of Contents
 - [Bitburner - Scripts](#bitburner-scripts)
   - [Table of Contents](#table-of-contents)
