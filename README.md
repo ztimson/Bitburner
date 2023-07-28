@@ -1,6 +1,5 @@
 # Bitburner - Scripts
-A collection of scripts & information pertaining to the [open source](https://github.com/danielyxie/bitburner) game 
-[Bitburner](https://danielyxie.github.io/bitburner/).
+A collection of scripts & information pertaining to the [open source](https://github.com/danielyxie/bitburner) game [Bitburner](https://danielyxie.github.io/bitburner/)
 
 ![Bitburner Logo](bitburner.png)
 
@@ -8,7 +7,7 @@ A collection of scripts & information pertaining to the [open source](https://gi
 - [Bitburner - Scripts](#bitburner-scripts)
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
-- [Scripts](#scripts)
+  - [Scripts](#scripts)
     - [banner.js](#bannerjs)
     - [botnet-manager.js (WIP)](#botnet-managerjs-wip)
     - [connect.js](#connectjs)
