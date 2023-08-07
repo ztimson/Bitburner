@@ -15,6 +15,16 @@
   [![Pull Requests](https://img.shields.io/badge/dynamic/json.svg?label=Pull%20Requests&style=for-the-badge&url=https://git.zakscode.com/api/v1/repos/ztimson/Bitburner&query=open_pr_counter)](https://git.zakscode.com/ztimson/Bitburner/pulls)
   [![Issues](https://img.shields.io/badge/dynamic/json.svg?label=Issues&style=for-the-badge&url=https://git.zakscode.com/api/v1/repos/ztimson/Bitburner&query=open_issues_count)](https://git.zakscode.com/ztimson/Bitburner/issues)
 
+  <!-- Links -->
+  ---
+  <div>
+    <a href="https://git.zakscode.com/ztimson/Bitburner/wiki" target="_blank">Documentation</a>
+    • <a href="https://git.zakscode.com/ztimson/Bitburner/issues/new?template=.github%2fissue_template%2fbug.md" target="_blank">Report a Bug</a>
+    • <a href="https://git.zakscode.com/ztimson/Bitburner/issues/new?template=.github%2fissue_template%2fenhancement.md" target="_blank">Request a Feature</a>
+  </div>
+
+  ---
+
 </div>
 
 ## Table of Contents
