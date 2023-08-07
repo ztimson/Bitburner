@@ -20,6 +20,7 @@
 ## Table of Contents
 - [Bitburner](#top)
 - [About](#about)
+  - [Built With](#built-with)
 - [Quick Start](#qiuck-start)
 - [Scripts](#scripts)
   - [banner.js](#banner)
@@ -39,6 +40,9 @@
 
 ## About
 A collection of scripts & information pertaining to the [open source](https://github.com/danielyxie/bitburner) game [Bitburner](https://danielyxie.github.io/bitburner/)
+
+### Built with
+[![JavaScript](https://img.shields.io/badge/JavaScript-000000?style=for-the-badge&logo=javascript)](https://javascript.com/)
 
 ## Quick Start
 
