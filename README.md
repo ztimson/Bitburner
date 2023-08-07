@@ -1,26 +1,44 @@
-# Bitburner - Scripts
-A collection of scripts & information pertaining to the [open source](https://github.com/danielyxie/bitburner) game [Bitburner](https://danielyxie.github.io/bitburner/)
+<!-- Header -->
+<div id="top" align="center">
+  <br />
+  
+  <!-- Logo -->
+  <img src="https://git.zakscode.com/repo-avatars/9b25b57330ba3a1d9da80dad4051be68373e52c4bfffc6f6ba9e89f7392f5f7d" alt="Logo" width="200" height="200">
 
-![Bitburner Logo](bitburner.png)
+  <!-- Title -->
+  ### Bitburner
+  
+  <!-- Description -->
+  Collection of Bitburner scipts
+
+  <!-- Repo badges -->
+  [![Pull Requests](https://img.shields.io/badge/dynamic/json.svg?label=Pull%20Requests&style=for-the-badge&url=https://git.zakscode.com/api/v1/repos/ztimson/Bitburner&query=open_pr_counter)](https://git.zakscode.com/ztimson/Bitburner/pulls)
+  [![Issues](https://img.shields.io/badge/dynamic/json.svg?label=Issues&style=for-the-badge&url=https://git.zakscode.com/api/v1/repos/ztimson/Bitburner&query=open_issues_count)](https://git.zakscode.com/ztimson/Bitburner/issues)
+
+</div>
 
 ## Table of Contents
-- [Bitburner - Scripts](#bitburner-scripts)
-  - [Table of Contents](#table-of-contents)
-  - [Quick Start](#quick-start)
-  - [Scripts](#scripts)
-    - [banner.js](#bannerjs)
-    - [botnet-manager.js (WIP)](#botnet-managerjs-wip)
-    - [connect.js](#connectjs)
-    - [copy.js](#copyjs)
-    - [crawler.js](#crawlerjs)
-    - [find-target.js](#find-targetjs)
-    - [hacknet-manager.js](#hacknet-managerjs)
-    - [miner.js](#minerjs)
-    - [network-graph.js](#network-graphjs)
-    - [rm.js](#rmjs)
-    - [rootkit.js](#rootkitjs)
-    - [server-manager.js](#server-managerjs)
-    - [update.js](#updatejs)
+- [Bitburner](#top)
+- [About](#about)
+- [Quick Start](#qiuck-start)
+- [Scripts](#scripts)
+  - [banner.js](#banner)
+  - [botnet-manager.js (WIP)](#botnet)
+  - [connect.js](#connect)
+  - [copy.js](#copy)
+  - [crawler.js](#crawler)
+  - [find-target.js](#find-target)
+  - [hacknet-manager.js](#hacknet)
+  - [miner.js](#miner)
+  - [network-graph.js](#network-graph)
+  - [rm.js](#rm)
+  - [rootkit.js](#rootkit)
+  - [server-manager.js](#server-manager)
+  - [update.js](#update)
+- [License](#license)
+
+## About
+A collection of scripts & information pertaining to the [open source](https://github.com/danielyxie/bitburner) game [Bitburner](https://danielyxie.github.io/bitburner/)
 
 ## Quick Start
 
@@ -49,12 +67,15 @@ run scripts/connect.js CSEC
 backdoor
 ```
 
-Learn more about the [available scripts](#scripts) bellow or pass the `--help` flag to any of the included scripts in-game.
-
 ## Scripts
 
-### [banner.js](./scripts/banner.js)
-**RAM:** 1.60 GB
+<details>
+<summary>
+  <h3 id="banner" style="display: inline">banner.js</h3>
+</summary>
+<br />
+
+**RAM:** 1.60 GB | [Code](./src/banner.js)
 
 Aesthetic & serves no real purpose. Prints a banner to the terminal & can repeat after game restarts.
 ```
@@ -71,9 +92,15 @@ Options:
 	-r, --reboot            Automatically display after game reboots
 	-h, --help              Display this help message
 ```
+</details>
 
-### [botnet-manager.js (WIP)](./scripts/botnet-manager.js)
-**RAM:** 7.15 GB
+<details>
+<summary>
+  <h3 id="botnet" style="display: inline">botnet-manager.js (WIP)</h3>
+</summary>
+<br />
+
+**RAM:** 7.15 GB | [Code](./scripts/botnet-manager.js)
 
 Late-game solution to hack servers. It orchestrates an unlimited number of servers to carry out distributed batched 
 attacks against targets. It includes a bunch of utilities to quickly dispatch single commands to all workers. Manger
@@ -101,9 +128,15 @@ Commands:
 	run                     Copy & run script on all worker nodes
 	start                   Start this device as the swarm manager
 ```
+</details>
 
-### [connect.js](./scripts/connect.js)
-**RAM:** 1.85 GB
+<details>
+<summary>
+  <h3 id="connect" style="display: inline">connect.js</h3>
+</summary>
+<br />
+
+**RAM:** 1.85 GB | [Code](./scripts/connect.js)
 
 The built in `connect` command only allows you to connect to devices in the immediate vicinity or servers that have
 backdoors installed requiring you to make several jumps. This script will automatically find a path & connect you saving
@@ -123,9 +156,15 @@ Usage:	run connect.js [OPTIONS] SERVER
 Options:
 	-h, --help              Display this help message
 ```
+</details>
 
-### [copy.js](./scripts/copy.js)
-**RAM:** 4.20 GB
+<details>
+<summary>
+  <h3 id="copy" style="display: inline">copy.js</h3>
+</summary>
+<br />
+
+**RAM:** 4.20 GB | [Code](./scripts/copy.js)
 
 Scripts often import other scripts requiring multiple `scp` calls before it can be run on a remote machine. This script 
 will automatically scan the file being copied for imports & recursively scan & copy the dependencies. Plus it has a
@@ -151,9 +190,15 @@ Options:
 	-q, --quite             Suppress program output
 	-h, --help              Display this help message
 ```
+</details>
 
-### [crawler.js](./scripts/crawler.js)
-**RAM:** 5.80 GB
+<details>
+<summary>
+  <h3 id="crawler" style="display: inline">crawler.js</h3>
+</summary>
+<br />
+
+**RAM:** 5.80 GB | [Code](./scripts/crawler.js)
 
 Mid-game solution to distribute & run scripts across the network.
 ```
@@ -182,9 +227,15 @@ Options:
 	-v, --verbose           Display the server names in the final report
 	-h, --help              Display this help message
 ```
+</details>
 
-### [find-target.js](./scripts/find-target.js)
-**RAM:** 4.05 GB
+<details>
+<summary>
+  <h3 id="find-target" style="display: inline">find-target.js</h3>
+</summary>
+<br />
+
+**RAM:** 4.05 GB | [Code](./scripts/find-target.js)
 
 A utility to help figure out which server is worth hacking the most. It does this by estimating the financial yield per
 minute for each server & returns the servers in a sorted list.
@@ -205,9 +256,15 @@ Options:
 	-v, --verbose           Display the estimated income per minute per core
 	-h, --help              Display this help message
 ```
+</details>
 
-### [hacknet-manager.js](./scripts/hacknet-manager.js)
-**RAM:** 5.70 GB
+<details>
+<summary>
+  <h3 id="hacknet" style="display: inline">hacknet-manager.js</h3>
+</summary>
+<br />
+
+**RAM:** 5.70 GB | [Code](./scripts/hacknet-manager.js)
 
 An early game solution to automate the hacknet & get easy money.
 ```
@@ -228,12 +285,18 @@ Options:
 	-s, --sleep             Amount of time to wait between purchases, defaults to 1 (second)
 	-h, --help              Display this help message
 ```
+</details>
 
-### [miner.js](./scripts/miner.js)
-**RAM:** 2.45 GB
+<details>
+<summary>
+  <h3 id="miner" style="display: inline">miner.js</h3>
+</summary>
+<br />
+
+**RAM:** 2.45 GB | [Code](./scripts/miner.js)
 
 An early-game HGW script to steal money from servers. You can deploy this on each server and have them hack themselves, 
-or they can all target the server with the most money which is more efficient (see [find-target.js](#find-targetjs)).
+or they can all target the server with the most money which is more efficient (see [find-target.js](#find-target)).
 ```
 [home ~/]> run scripts/miner.js --help
 Running script with 1 thread(s), pid 1 and args: ["--help"].
@@ -252,9 +315,15 @@ Options:
 	-s, --sleep             Amount of time to wait between purchases, defaults to 1 (second)
 	-h, --help              Display this help message
 ```
+</details>
 
-### [network-graph.js](./scripts/network-graph.js)
-**RAM:** 3.85 GB
+<details>
+<summary>
+  <h3 id="network-graph" style="display: inline">network-graph.js</h3>
+</summary>
+<br />
+
+**RAM:** 3.85 GB | [Code](./scripts/network-graph.js)
 
 A utility to scan the network & build a visual tree of all the devices. It comes with lots of flags to narrow down the
 results. It's useful for figuring out where you are, manually finding targets & discovering the path to a server & 
@@ -284,9 +353,15 @@ Options:
 	-v, --verbose           Display level, specs & usage in that order: [HL|P] {CPU|RAM} (USG%)
 	-h, --help              Display this help message
 ```
+</details>
 
-### [rm.js](./scripts/rm.js)
-**RAM:** 2.85 GB
+<details>
+<summary>
+  <h3 id="rm" style="display: inline">rm.js</h3>
+</summary>
+<br />
+
+**RAM:** 2.85 GB | [Code](./scripts/rm.js)
 
 [bitburner-connector](https://plugins.jetbrains.com/plugin/18338-bitburner-connector) would occasionally push my IDE
 files to the game, so I created this simple script to recursively search & delete files from a directory to save me 
@@ -309,9 +384,15 @@ Options:
 	-r, --recursive         Delete everything inside directory
 	-h, --help              Display this help message
 ```
+</details>
 
-### [rootkit.js](./scripts/rootkit.js)
-**RAM:** 4.65 GB
+<details>
+<summary>
+  <h3 id="rootkit" style="display: inline">rootkit.js</h3>
+</summary>
+<br />
+
+**RAM:** 4.65 GB | [Code](./scripts/rootkit.js)
 
 Automatically gains root on the local or remote server. A script can be passed as an additional argument; it will be
 copied and automatically executed with the maximum number of threads after being rooted.
@@ -339,9 +420,15 @@ Options:
 	-v, --verbose           Display level, specs & usage in that order: [HL|P] {CPU|RAM} (USG%)
 	-h, --help              Display this help message
 ```
+</details>
 
-### [server-manager.js](./scripts/server-manager.js)
-**RAM:** 11.35 GB
+<details>
+<summary>
+  <h3 id="server-miner" style="display: inline">server-miner.js</h3>
+</summary>
+<br />
+
+**RAM:** 11.35 GB | [Code](./scripts/server-manager.js)
 
 Mid-game script to handle purchasing and upgrading servers for more computer power. You can also set a script to run
 automatically after purchase. Useful to chain with `miner.js` or `botnet.js`.
@@ -366,9 +453,15 @@ Options:
 	-s, --sleep             Amount of time to wait between purchases, defaults to 1 (second)
 	-h, --help              Display this help message
 ```
+</details>
 
-### [update.js](./scripts/update.js)
-**RAM:** 2.65 GB
+<details>
+<summary>
+  <h3 id="update" style="display: inline">update.js</h3>
+</summary>
+<br />
+
+**RAM:** 2.65 GB | [Code](./scripts/update.js)
 
 Uses the in-game `wget` to download all the scripts in this repository. Can target remote servers to quickly copy the 
 entire toolkit to the target.
@@ -389,3 +482,9 @@ Options:
 	--no-banner             Hide the banner (Used internally)
 	-h, --help              Display this help message
 ```
+</details>
+
+## License
+Copyright © 2023 Zakary Timson | Available under MIT Licensing
+
+See the [license](./LICENSE) for more information.
